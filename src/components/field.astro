@@ -1,0 +1,52 @@
+---
+import type { HTMLAttributes } from 'astro/types'
+
+type Props = HTMLAttributes<'input'> & {
+  label: string
+  id: string
+  field: string
+}
+
+const { label, id, field, ...attrs } = Astro.props
+---
+
+<p class="field">
+  <label for={id}>{label}</label>
+  <input {id} data-field={field} {...attrs} />
+</p>
+
+<style>
+  .field {
+    margin: 0;
+    margin-bottom: 25px;
+    padding: 0;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  input {
+    width: 100%;
+    padding: 12px 19px;
+    border: none;
+    font-family: var(--font-open-sans);
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 18px;
+    color: var(--color-text);
+    background-color: var(--color-field-bg);
+  }
+
+  input:hover {
+    background-color: var(--color-field-bg-hover);
+    outline: none;
+  }
+
+  input:focus {
+    border: 3px solid var(--color-accent);
+    background-color: var(--color-bg);
+    outline: none;
+  }
+</style>

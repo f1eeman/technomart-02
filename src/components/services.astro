@@ -1,0 +1,223 @@
+---
+import Button from '@/components/button.astro'
+
+interface Service {
+  slug: string
+  title: string
+  text: string[]
+}
+
+const SERVICES: Service[] = [
+  {
+    slug: 'delivery',
+    title: 'Доставка',
+    text: [
+      'Мы с удовольствием доставим ваш товар прямо к вашему подъезду совершенно бесплатно! Ведь мы неплохо заработаем, поднимая его на ваш этаж.',
+    ],
+  },
+  {
+    slug: 'warranty',
+    title: 'Гарантия',
+    text: [
+      'Если из-за возгорания купленного у нас товара у вас сгорит дом — не переживайте, мы выдадим вам новый.',
+      'Товар, не дом, конечно же.',
+    ],
+  },
+  {
+    slug: 'credit',
+    title: 'Кредит',
+    text: [
+      'Залезть в долговую яму стало проще! Кредитные консультанты подберут для вас наиболее выгодные условия кредита. Выгодные для нашего банка, разумеется.',
+    ],
+  },
+]
+
+const START = 'warranty'
+---
+
+<section class="services" data-tabs>
+  <div class="container">
+    <h2 class="visually-hidden">Сервисы</h2>
+    <div class="services-column">
+      <ul class="services-list">
+        {
+          SERVICES.map((service) => (
+            <li
+              class:list={[
+                'service-item',
+                service.slug === START && 'service-item-current',
+              ]}
+            >
+              <Button
+                as="a"
+                class="services-button services-link"
+                href={`#service-${service.slug}`}
+                data-tab={service.slug}
+                aria-current={service.slug === START ? 'true' : 'false'}
+              >
+                {service.title}
+              </Button>
+            </li>
+          ))
+        }
+      </ul>
+      <div class="services-box">
+        {
+          SERVICES.map((service) => (
+            <section
+              class:list={[
+                'service-point',
+                `service-point-${service.slug}`,
+                service.slug === START && 'description-active',
+              ]}
+              id={`service-${service.slug}`}
+              data-panel={service.slug}
+            >
+              <h3>{service.title}</h3>
+              {service.text.map((paragraph) => (
+                <p>{paragraph}</p>
+              ))}
+            </section>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .services {
+    min-height: 450px;
+    margin-bottom: 95px;
+    background-color: #e5e5e5;
+    box-shadow: 0 160px 0 0 #fff inset;
+  }
+
+  .services-column {
+    display: flex;
+    flex-wrap: wrap;
+    padding-top: 60px;
+    padding-bottom: 69px;
+  }
+
+  .services-list {
+    width: 285px;
+    min-height: 320px;
+    margin: 0;
+    margin-right: 120px;
+    padding: 0;
+    padding-top: 80px;
+    border-right: 7px solid #000;
+    font-size: 18px;
+    line-height: 24px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    list-style: none;
+  }
+
+  .service-item {
+    margin-bottom: 23px;
+    background-image: linear-gradient(#000, #000);
+    background-repeat: no-repeat;
+    background-position: left center;
+    background-size: 0 100%;
+  }
+
+  .services-button {
+    width: 160px;
+    text-align: center;
+  }
+
+  .service-item-current {
+    color: #f7e184;
+    background-size: 100% 100%;
+  }
+
+  .service-item-current a {
+    color: #f7e184;
+    cursor: text;
+  }
+
+  .service-item-current a::before {
+    display: none;
+  }
+
+  .services-box {
+    width: 700px;
+    padding-top: 70px;
+  }
+
+  .service-point {
+    position: relative;
+    display: none;
+  }
+
+  .description-active {
+    display: block;
+  }
+
+  .service-point-delivery::after {
+    content: '';
+    position: absolute;
+    top: 10px;
+    right: 0;
+    display: block;
+    width: 136px;
+    height: 164px;
+    background-image: url('../assets/images/delivery.svg');
+    background-repeat: no-repeat;
+    background-position: 0 0;
+  }
+
+  .service-point-warranty::after {
+    content: '';
+    position: absolute;
+    top: -15px;
+    right: -15px;
+    display: block;
+    width: 171px;
+    height: 195px;
+    background-image: url('../assets/images/warranty.svg');
+    background-repeat: no-repeat;
+    background-position: 0 0;
+  }
+
+  .service-point-credit::after {
+    content: '';
+    position: absolute;
+    top: -10px;
+    right: 0;
+    display: block;
+    width: 156px;
+    height: 188px;
+    background-image: url('../assets/images/credit.svg');
+    background-repeat: no-repeat;
+    background-position: 0 0;
+  }
+
+  .service-point h3 {
+    margin: 0;
+    margin-bottom: 35px;
+    padding: 0;
+    font-size: 47px;
+    font-weight: normal;
+    line-height: 48px;
+  }
+
+  .service-point p {
+    width: 450px;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-open-sans);
+    font-size: 15px;
+    font-weight: normal;
+    line-height: 30px;
+    color: var(--color-surface-dark);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .service-item {
+      transition: background-size 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+  }
+</style>

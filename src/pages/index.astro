@@ -1,16 +1,29 @@
 ---
 import Layout from '@/layouts/Layout.astro'
-import Promo from '@/components/promo.astro'
-import Request from '@/components/request.astro'
-import Sample from '@/components/sample.astro'
+import PromoSlider from '@/components/promo-slider.astro'
+import CatalogTiles from '@/components/catalog-tiles.astro'
+import Services from '@/components/services.astro'
+import Brands from '@/components/brands.astro'
+import AboutContacts from '@/components/about-contacts.astro'
 
-const title = 'Заголовок страницы — Название продукта'
+const title = 'DEVICE — интернет-магазин гаджетов'
 const description =
-  'Описание страницы для поиска и соцсетей: одно-два предложения о продукте.'
+  'Моноподы, экшн-камеры, квадрокоптеры, умные часы и фитнес-браслеты. Доставка по России, гарантия и кредит.'
 ---
 
-<Layout {title} {description}>
-  <Promo />
-  <Sample />
-  <Request />
+<Layout {title} {description} contacts>
+  <h1 class="visually-hidden">Девайс</h1>
+  <PromoSlider />
+  <CatalogTiles />
+  <Services />
+  <Brands />
+  <AboutContacts />
 </Layout>
+
+<script>
+  import { initSlider } from '@/scripts/slider'
+  import { initTabs } from '@/scripts/tabs'
+
+  initSlider()
+  initTabs()
+</script>

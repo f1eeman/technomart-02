@@ -1,0 +1,199 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import PageHead from '@/components/page-head.astro'
+import Button from '@/components/button.astro'
+import { HOME } from '@/data/nav'
+
+const title = 'О нас — DEVICE'
+const description =
+  'Интернет-магазин DEVICE: с какого года работаем, откуда взялось название, кто собирает заказы и сколько их было.'
+
+const FIGURES = [
+  { label: 'Год основания', value: '2012' },
+  { label: 'Заказов оформлено', value: '48 317' },
+  { label: 'Возвратов', value: '1 268' },
+  { label: 'Из них селфи-палок длиной 8,5 метра', value: '1 261' },
+  { label: 'Человек в штате', value: '22' },
+]
+---
+
+<Layout {title} {description} inner>
+  <PageHead heading="О нас" crumbs={[HOME, { title: 'О нас' }]} />
+  <div class="about-page">
+    <p class="about-lead">
+      DEVICE торгует гаджетами с 2012 года. За это время мы научились отличать
+      квадрокоптер от фитнес-браслета и больше почти не менялись.
+    </p>
+    <div class="about-columns">
+      <section class="about-column">
+        <h2 class="about-title">Почему DEVICE</h2>
+        <p class="about-text">
+          Название выбирали полтора часа. Нужно было слово, которое одинаково
+          подходит палке для селфи, шлему и квадрокоптеру. DEVICE подошёл: он не
+          обещает ничего конкретного, так что нарушить обещание мы не сможем.
+        </p>
+        <h2 class="about-title">Кто здесь работает</h2>
+        <p class="about-text">
+          Нас двадцать два: восемь в офисе, восемь на складе, четверо собирают
+          заказы и двое в бухгалтерии. Курьеров нет ни одного — до вашего
+          подъезда товар везёт транспортная компания, а мы отвечаем ровно за то,
+          чтобы адрес на коробке был написан разборчиво.
+        </p>
+      </section>
+      <section class="about-column">
+        <h2 class="about-title">DEVICE в числах</h2>
+        <p class="about-text">
+          Цифры за всё время работы. Считали сами, сверять не с кем.
+        </p>
+        <dl class="about-figures">
+          {
+            FIGURES.map((figure) => (
+              <div class="about-figure">
+                <dt>{figure.label}</dt>
+                <dd>{figure.value}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </section>
+    </div>
+    <p class="about-note">
+      Больше про себя рассказать нечего: мы пробовали написать длиннее, но
+      каждый раз выходило про доставку. Что мы продаём — лучше видно в каталоге.
+    </p>
+    <p class="about-actions">
+      <Button as="a" class="about-button" href="/catalog">
+        Перейти в каталог
+      </Button>
+      <a class="about-link" href="/#contacts">Контакты и карта</a>
+    </p>
+  </div>
+</Layout>
+
+<style>
+  .about-page {
+    width: var(--layout-width);
+    margin: 0 auto;
+    margin-bottom: 90px;
+    padding-right: 20px;
+    padding-left: 80px;
+  }
+
+  .about-lead {
+    width: 760px;
+    margin: 0;
+    margin-bottom: 55px;
+    padding: 0;
+    font-size: 24px;
+    line-height: 36px;
+  }
+
+  .about-columns {
+    display: flex;
+    column-gap: 70px;
+  }
+
+  .about-column {
+    position: relative;
+    width: 515px;
+    padding-top: 30px;
+  }
+
+  .about-column::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 80px;
+    height: 7px;
+    background-color: var(--color-text);
+  }
+
+  .about-title {
+    margin: 0;
+    margin-bottom: 25px;
+    padding: 0;
+    font-size: 30px;
+    font-weight: normal;
+    line-height: 36px;
+  }
+
+  .about-text {
+    margin: 0;
+    margin-bottom: 40px;
+    padding: 0;
+    font-family: var(--font-open-sans);
+    font-size: 15px;
+    font-weight: normal;
+    line-height: 30px;
+  }
+
+  .about-figures {
+    margin: 0;
+    padding: 0;
+  }
+
+  .about-figure {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding-block: 14px;
+    border-bottom: 2px solid #e5e5e5;
+  }
+
+  .about-figures dt {
+    width: 340px;
+    font-family: var(--font-open-sans);
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 20px;
+    color: rgb(0 0 0 / 50%);
+  }
+
+  .about-figures dd {
+    margin: 0;
+    font-family: var(--font-gilroy-light);
+    font-size: 24px;
+    line-height: 36px;
+  }
+
+  .about-note {
+    width: 560px;
+    margin: 0;
+    margin-top: 55px;
+    margin-bottom: 40px;
+    padding: 0;
+    font-family: var(--font-open-sans);
+    font-size: 15px;
+    font-weight: normal;
+    line-height: 30px;
+    color: var(--color-surface-dark);
+  }
+
+  .about-actions {
+    display: flex;
+    align-items: center;
+    column-gap: 40px;
+    margin: 0;
+    padding: 0;
+  }
+
+  .about-button {
+    padding-right: 23px;
+    padding-left: 23px;
+  }
+
+  .about-link {
+    font-family: var(--font-open-sans);
+    font-size: 15px;
+    font-weight: normal;
+    line-height: 30px;
+    color: var(--color-text);
+    text-decoration: underline;
+  }
+
+  .about-link:hover,
+  .about-link:focus {
+    text-decoration: none;
+  }
+</style>

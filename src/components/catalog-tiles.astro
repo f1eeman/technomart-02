@@ -1,0 +1,157 @@
+---
+import { CATEGORIES, productsOf } from '@/data/catalog'
+
+interface Props {
+  counts?: boolean
+  inner?: boolean
+}
+
+const { counts = false, inner = false } = Astro.props
+
+const amountLabel = (total: number): string => {
+  const tail = total % 10
+  const teen = total % 100
+
+  if (teen >= 11 && teen <= 14) return `${String(total)} товаров`
+
+  if (tail === 1) return `${String(total)} товар`
+
+  if (tail >= 2 && tail <= 4) return `${String(total)} товара`
+
+  return `${String(total)} товаров`
+}
+---
+
+<section class="catalog">
+  <div class:list={['container', inner && 'inner']}>
+    <h2 class="visually-hidden">Каталог товаров</h2>
+    <ul class="catalog-list">
+      {
+        CATEGORIES.map((category) => (
+          <li class="catalog-item">
+            <a class={category.icon} href={`/catalog/${category.slug}`}>
+              {category.tileLines.map((line, at) => (
+                <>
+                  {at > 0 && <br />}
+                  {line}
+                </>
+              ))}
+            </a>
+            {counts && (
+              <span class="catalog-item-count">
+                {amountLabel(productsOf(category.slug).length)}
+              </span>
+            )}
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .catalog {
+    margin-bottom: 25px;
+  }
+
+  .container.inner {
+    padding-left: 80px;
+  }
+
+  .catalog-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .catalog-item a {
+    position: relative;
+    display: inline-block;
+    width: 160px;
+    vertical-align: baseline;
+    color: var(--color-text);
+  }
+
+  .catalog-item a::before {
+    content: '';
+    display: block;
+    width: 160px;
+    height: 160px;
+    margin-bottom: 35px;
+    background-color: var(--color-accent-soft);
+    background-image: linear-gradient(var(--color-accent), var(--color-accent));
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 160px 0;
+  }
+
+  .catalog-item a:hover::before,
+  .catalog-item a:focus::before {
+    background-size: 160px 160px;
+  }
+
+  .catalog-item a::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 160px;
+    height: 160px;
+    margin-bottom: 35px;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  .virtual-reality::after {
+    background-image: url('../assets/images/popular-1.svg');
+  }
+
+  .catalog-item .monopod::after {
+    background-image: url('../assets/images/popular-2.svg');
+    background-position: 50% 40px;
+  }
+
+  .action-camera::after {
+    background-image: url('../assets/images/popular-3.svg');
+  }
+
+  .fitness-bracelet::after {
+    background-image: url('../assets/images/popular-4.svg');
+  }
+
+  .smart-watch::after {
+    background-image: url('../assets/images/popular-5.svg');
+  }
+
+  .quadrocopter::after {
+    background-image: url('../assets/images/popular-6.svg');
+  }
+
+  .catalog-item a:active::after {
+    opacity: 0.3;
+  }
+
+  .catalog-item a:active {
+    color: rgb(0 0 0 / 30%);
+  }
+
+  .catalog-item-count {
+    display: block;
+    margin-top: 10px;
+    font-family: var(--font-open-sans);
+    font-size: 13px;
+    font-weight: normal;
+    line-height: 20px;
+    color: rgb(0 0 0 / 50%);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .catalog-item a::before {
+      transition: background-size 200ms;
+    }
+  }
+</style>

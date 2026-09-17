@@ -2,30 +2,56 @@ import { defineConfig, fontProviders } from 'astro/config'
 import sitemap from '@astrojs/sitemap'
 
 export default defineConfig({
-  site: 'https://example.invalid',
+  site: 'https://device.example',
   integrations: [sitemap()],
   fonts: [
     {
       provider: fontProviders.local(),
+      name: 'Gilroy ExtraBold',
+      cssVariable: '--font-gilroy-extrabold',
+      fallbacks: ['Arial', 'sans-serif'],
+      options: {
+        variants: [
+          {
+            weight: 400,
+            style: 'normal',
+            src: [
+              './src/assets/fonts/gilroy-extrabold.woff2',
+              './src/assets/fonts/gilroy-extrabold.woff',
+            ],
+          },
+        ],
+      },
+    },
+    {
+      provider: fontProviders.local(),
+      name: 'Gilroy Light',
+      cssVariable: '--font-gilroy-light',
+      fallbacks: ['Arial', 'sans-serif'],
+      options: {
+        variants: [
+          {
+            weight: 400,
+            style: 'normal',
+            src: [
+              './src/assets/fonts/gilroy-light.woff2',
+              './src/assets/fonts/gilroy-light.woff',
+            ],
+          },
+        ],
+      },
+    },
+    {
+      provider: fontProviders.local(),
       name: 'Open Sans',
       cssVariable: '--font-open-sans',
-      fallbacks: ['sans-serif'],
+      fallbacks: ['Arial', 'sans-serif'],
       options: {
         variants: [
           {
             weight: 400,
             style: 'normal',
             src: ['./src/assets/fonts/open-sans-400.woff2'],
-          },
-          {
-            weight: 600,
-            style: 'normal',
-            src: ['./src/assets/fonts/open-sans-600.woff2'],
-          },
-          {
-            weight: 700,
-            style: 'normal',
-            src: ['./src/assets/fonts/open-sans-700.woff2'],
           },
         ],
       },

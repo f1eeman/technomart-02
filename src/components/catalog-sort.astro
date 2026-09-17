@@ -1,0 +1,161 @@
+---
+const FIELDS = [
+  { value: 'price', title: 'По цене' },
+  { value: 'kind', title: 'По типу' },
+  { value: 'popularity', title: 'По популярности' },
+]
+---
+
+<section class="sort" data-sort>
+  <h2 class="sort-title">Сортировка:</h2>
+  <ul class="sort-list">
+    {
+      FIELDS.map((field) => (
+        <li>
+          <a
+            class:list={[field.value === 'price' && 'current-sort-type']}
+            href={`?sort=${field.value}`}
+            data-sort-field={field.value}
+          >
+            {field.title}
+          </a>
+        </li>
+      ))
+    }
+    <li>
+      <a
+        class="sort-by-ascending current-sort-type"
+        href="?dir=asc"
+        data-sort-dir="asc"
+      >
+        <span class="visually-hidden">По возрастанию</span>
+      </a>
+    </li>
+    <li>
+      <a class="sort-by-descending" href="?dir=desc" data-sort-dir="desc">
+        <span class="visually-hidden">По убыванию</span>
+      </a>
+    </li>
+  </ul>
+</section>
+
+<style>
+  .sort {
+    position: relative;
+    display: flex;
+    flex-wrap: nowrap;
+    min-height: 70px;
+    margin-bottom: 70px;
+    padding-top: 23px;
+  }
+
+  .sort::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 0 -70px;
+    z-index: 0;
+    margin-right: -2500px;
+    background-color: rgb(0 0 0 / 8%);
+  }
+
+  .sort-title {
+    position: relative;
+    z-index: 10;
+    margin: 0;
+    margin-right: 53px;
+    padding: 0;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .sort-list {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .sort-list a {
+    display: inline-block;
+    margin-right: 35px;
+    font-family: var(--font-open-sans);
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 18px;
+    color: rgb(0 0 0 / 30%);
+  }
+
+  .sort-list li:nth-child(4) {
+    margin-left: auto;
+  }
+
+  .sort-list .sort-by-ascending {
+    width: 0;
+    height: 0;
+    margin-right: 10px;
+    margin-left: auto;
+    border: 9px solid #c3c2c2;
+    border-top: none;
+    border-right-width: 5px;
+    border-right-color: transparent;
+    border-left-width: 5px;
+    border-left-color: transparent;
+  }
+
+  .sort-list .sort-by-descending {
+    width: 0;
+    height: 0;
+    margin-right: 0;
+    border: 9px solid #c3c2c2;
+    border-right-width: 5px;
+    border-right-color: transparent;
+    border-bottom: none;
+    border-left-width: 5px;
+    border-left-color: transparent;
+  }
+
+  .sort-list .current-sort-type {
+    color: var(--color-text);
+  }
+
+  .sort-list .sort-by-ascending.current-sort-type {
+    border-bottom-color: #000;
+  }
+
+  .sort-list .sort-by-descending.current-sort-type {
+    border-top-color: #000;
+  }
+
+  .sort-list a:hover,
+  .sort-list a:focus {
+    color: rgb(0 0 0 / 40%);
+  }
+
+  .sort-list a:active {
+    color: var(--color-text);
+  }
+
+  .sort-by-ascending:hover,
+  .sort-by-ascending:focus {
+    border-bottom-color: rgb(0 0 0 / 40%);
+  }
+
+  .sort-by-ascending:active {
+    border-bottom-color: rgb(0 0 0);
+  }
+
+  .sort-by-descending:hover,
+  .sort-by-descending:focus {
+    border-top-color: rgb(0 0 0 / 40%);
+  }
+
+  .sort-by-descending:active {
+    border-top-color: rgb(0 0 0);
+  }
+</style>

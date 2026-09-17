@@ -1,0 +1,58 @@
+---
+import { BRANDS } from '@/data/catalog'
+---
+
+<section class="companies-logos">
+  <div class="container">
+    <h2 class="visually-hidden">Производители</h2>
+    <ul class="companies-logos-list">
+      {
+        BRANDS.map((brand) => (
+          <li class="companie-logo-item">
+            <a href={`/brand/${brand.slug}`}>
+              <img
+                class="image"
+                src={brand.image.src}
+                width="260"
+                height="100"
+                alt={brand.name}
+              />
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .companies-logos-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin: 0;
+    margin-bottom: 95px;
+    padding: 0;
+    list-style: none;
+  }
+
+  .companie-logo-item {
+    width: 260px;
+    height: 100px;
+  }
+
+  .companie-logo-item .image {
+    filter: grayscale(1) opacity(0.2);
+  }
+
+  .companie-logo-item a:hover .image,
+  .companie-logo-item a:focus .image {
+    filter: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .companie-logo-item .image {
+      transition: filter 200ms;
+    }
+  }
+</style>

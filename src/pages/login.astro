@@ -1,0 +1,151 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import PageHead from '@/components/page-head.astro'
+import Button from '@/components/button.astro'
+import Field from '@/components/field.astro'
+import { HOME } from '@/data/nav'
+
+const title = 'Вход — DEVICE'
+const description =
+  'Вход в личный кабинет интернет-магазина DEVICE: заказы, данные покупателя и адрес доставки.'
+---
+
+<Layout {title} {description} inner>
+  <PageHead heading="Вход" crumbs={[HOME, { title: 'Вход' }]} />
+  <div class="login-page" data-login-page>
+    <p class="login-lead">
+      Та же форма, что открывается по ссылке «Войти» в шапке, — на случай, если
+      ссылку открыли в новой вкладке.
+    </p>
+    <form class="login-page-form">
+      <Field
+        label="Логин:"
+        id="page-login"
+        field="login"
+        name="login"
+        type="text"
+        autocomplete="username"
+      />
+      <Field
+        label="Пароль:"
+        id="page-password"
+        field="password"
+        name="password"
+        type="password"
+        autocomplete="current-password"
+      />
+      <p class="login-row">
+        <label class="login-checkbox">
+          <input class="visually-hidden" type="checkbox" name="remember" />
+          <span class="checkbox-indicator"></span>
+          Запомните меня
+        </label>
+        <a class="restore" href="/restore">Я забыл пароль</a>
+      </p>
+      <Button class="log-in" type="submit">Войти</Button>
+      <p class="login-error" data-login-error hidden>
+        Заполните логин и пароль — без них войти не получится.
+      </p>
+    </form>
+  </div>
+</Layout>
+
+<script>
+  import { initLoginPage } from '@/scripts/forms'
+
+  initLoginPage()
+</script>
+
+<style>
+  .login-page {
+    width: var(--layout-width);
+    margin: 0 auto;
+    margin-bottom: 90px;
+    padding-right: 20px;
+    padding-left: 80px;
+  }
+
+  .login-lead {
+    width: 560px;
+    margin: 0;
+    margin-bottom: 40px;
+    padding: 0;
+    font-family: var(--font-open-sans);
+    font-size: 15px;
+    font-weight: normal;
+    line-height: 30px;
+    color: var(--color-surface-dark);
+  }
+
+  .login-page-form {
+    width: 390px;
+  }
+
+  .login-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0;
+    margin-bottom: 35px;
+    padding: 0;
+  }
+
+  .login-checkbox {
+    position: relative;
+    padding-left: 35px;
+    cursor: pointer;
+  }
+
+  .login-checkbox input[type='checkbox'] + .checkbox-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--color-text);
+    border-radius: 50%;
+    transition-duration: 0.1s;
+  }
+
+  .login-checkbox input[type='checkbox']:focus + .checkbox-indicator {
+    border-color: var(--color-accent);
+    outline: none;
+  }
+
+  .login-checkbox input[type='checkbox']:checked + .checkbox-indicator {
+    border: 6px solid var(--color-accent);
+    background-color: var(--color-text);
+  }
+
+  .login-checkbox:hover,
+  .login-checkbox:focus {
+    color: rgb(0 0 0 / 60%);
+  }
+
+  .restore {
+    color: var(--color-text);
+    text-decoration: underline;
+  }
+
+  .restore:hover,
+  .restore:focus {
+    text-decoration: none;
+  }
+
+  .log-in {
+    width: 150px;
+    text-align: center;
+  }
+
+  .login-error {
+    margin: 0;
+    margin-top: 25px;
+    padding: 0;
+    font-family: var(--font-open-sans);
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 20px;
+    color: var(--color-text);
+  }
+</style>

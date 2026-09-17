@@ -1,0 +1,148 @@
+---
+import Button from '@/components/button.astro'
+import map from '@/assets/images/map.jpg'
+
+const TRANSPORT = ['Деловые Линии', 'Автотрейдинг', 'ЖелДорЭкспедиция']
+---
+
+<div class="index-columns container">
+  <section class="index-column about-us" data-notch>
+    <h2 class="index-column__title about-us__title">О нас</h2>
+    <p class="index-column__text about-us__text">
+      Огромный выбор гаджетов не оставит равнодушным гика, <br /> который есть в каждом
+      из нас.
+    </p>
+    <p class="index-column__text about-us__text">
+      Мы можем доставить ваш товар в самые отдаленные точки России! DEVICE
+      работает со многими транспортными компаниями:
+    </p>
+    <ul class="about-us__transport-companies-list">
+      {
+        TRANSPORT.map((company) => (
+          <li class="about-us__transport-companie-item">{company}</li>
+        ))
+      }
+    </ul>
+    <Button as="a" class="more-details-us" href="/about">
+      Подробнее о нас
+    </Button>
+  </section>
+  <section class="index-column contacts" id="contacts" data-notch>
+    <h2 class="index-column__title contacts__title">Контакты</h2>
+    <p class="index-column__text contacts__text">
+      Вы можете забрать товар сами, заехав в наш офис. Заодно, вы сможете
+      проверить работоспособность покупки. Всякое бывает.
+    </p>
+    <a class="index-column__image-box" href="#contacts" data-modal-open="map">
+      <img
+        class="contacts__map"
+        src={map.src}
+        width="560"
+        height="222"
+        alt="г. Москва, ул. Строителей, 15"
+      />
+    </a>
+    <Button as="a" class="write-us" href="#write-us" data-modal-open="write-us">
+      Напишите нам
+    </Button>
+  </section>
+</div>
+
+<style>
+  .index-columns {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    min-height: 656px;
+  }
+
+  .index-column {
+    position: relative;
+    width: 560px;
+  }
+
+  .index-column::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 80px;
+    height: 7px;
+    background-color: var(--color-text);
+  }
+
+  .index-column__title {
+    margin: 0;
+    margin-top: 50px;
+    margin-bottom: 52px;
+    padding: 0;
+    font-size: 47px;
+    line-height: 48px;
+  }
+
+  .index-column__text {
+    margin: 0;
+    margin-bottom: 40px;
+    padding: 0;
+    font-family: var(--font-open-sans);
+    font-size: 15px;
+    font-weight: normal;
+    line-height: 30px;
+  }
+
+  .about-us__text:first-of-type {
+    margin-bottom: 33px;
+  }
+
+  .about-us__text:nth-of-type(2) {
+    margin-bottom: 55px;
+  }
+
+  .index-column__image-box {
+    display: block;
+    width: 560px;
+    height: 222px;
+    margin: 0;
+    margin-bottom: 80px;
+    padding: 0;
+  }
+
+  .about-us__transport-companies-list {
+    margin: 0;
+    margin-bottom: 80px;
+    padding: 0;
+    list-style: none;
+  }
+
+  .about-us__transport-companie-item {
+    position: relative;
+    margin-bottom: 20px;
+    padding-left: 35px;
+  }
+
+  .about-us__transport-companie-item:last-child {
+    margin-bottom: 0;
+  }
+
+  .about-us__transport-companie-item::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 8px;
+    height: 8px;
+    margin-top: -4px;
+    border: 2px solid #e5e5e5;
+    border-radius: 50%;
+  }
+
+  .more-details-us {
+    padding-right: 23px;
+    padding-left: 23px;
+  }
+
+  .write-us {
+    padding-right: 41px;
+    padding-left: 41px;
+  }
+</style>

@@ -1,5 +1,5 @@
 {
-  "name": "landing-template",
+  "name": "device",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -22,8 +22,7 @@
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
-    "astro": "~7.1.6",
-    "gsap": "~3.15.0"
+    "astro": "~7.1.6"
   },
   "devDependencies": {
     "@astrojs/check": "~0.9.10",
