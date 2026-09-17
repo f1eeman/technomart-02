@@ -1,0 +1,107 @@
+---
+interface Props {
+  pages: number
+}
+
+const { pages } = Astro.props
+
+const numbers = Array.from({ length: Math.max(pages, 1) }, (_, at) => at + 1)
+---
+
+<ul class="pagination-list" data-pagination>
+  <li class="pagination-item-prev">
+    <a href="?page=1" data-page-step="-1">Назад</a>
+  </li>
+  {
+    numbers.map((page) => (
+      <li
+        class:list={[
+          'pagination-item',
+          page === 1 && 'pagination-item-current',
+        ]}
+        data-page-item={String(page)}
+      >
+        <a
+          class:list={[page === 1 && 'link-current']}
+          href={`?page=${String(page)}`}
+          data-page={String(page)}
+        >
+          {page}
+        </a>
+      </li>
+    ))
+  }
+  <li class="pagination-item-next">
+    <a href="?page=2" data-page-step="1">Вперед</a>
+  </li>
+</ul>
+
+<style>
+  .pagination-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    width: 100%;
+    min-height: 70px;
+    margin: 0;
+    margin-bottom: 77px;
+    padding: 0;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    background-color: #ebebeb;
+    list-style: none;
+  }
+
+  .pagination-item-prev a,
+  .pagination-item-next a {
+    display: inline-block;
+    padding-right: 30px;
+    padding-left: 30px;
+    line-height: 70px;
+    vertical-align: middle;
+    color: var(--color-text);
+  }
+
+  .pagination-item-prev a:hover,
+  .pagination-item-prev a:focus,
+  .pagination-item-next a:hover,
+  .pagination-item-next a:focus {
+    background-color: #d9d9d9;
+  }
+
+  .pagination-item-prev a:active,
+  .pagination-item-next a:active {
+    color: rgb(0 0 0 / 30%);
+  }
+
+  .pagination-item a {
+    color: rgb(0 0 0 / 30%);
+  }
+
+  .pagination-item a:hover:not(.link-current),
+  .pagination-item a:focus:not(.link-current) {
+    color: rgb(0 0 0 / 60%);
+  }
+
+  .pagination-item a:active:not(.link-current) {
+    color: var(--color-text);
+  }
+
+  .pagination-item-current a {
+    color: var(--color-text);
+  }
+
+  .pagination-item-prev {
+    margin-right: 205px;
+  }
+
+  .pagination-item {
+    margin-right: 32px;
+  }
+
+  .pagination-item-next {
+    margin-left: auto;
+  }
+</style>

@@ -1,0 +1,384 @@
+---
+import Button from '@/components/button.astro'
+import { COLORS, priceLabel, type Product } from '@/data/catalog'
+
+interface Props {
+  products: Product[]
+}
+
+const { products } = Astro.props
+
+const prices = products.map((product) => product.price)
+const lowest = Math.min(...prices)
+const highest = Math.max(...prices)
+
+const BLUETOOTH = [
+  { value: 'yes', title: 'Есть' },
+  { value: 'no', title: 'Нет' },
+  { value: 'any', title: 'Не важно' },
+]
+---
+
+<section class="filters">
+  <h2 class="filters-title"><span>Фильтр:</span></h2>
+  <form
+    class="filter"
+    method="get"
+    data-filter
+    data-lowest={String(lowest)}
+    data-highest={String(highest)}
+  >
+    <fieldset class="filter-price">
+      <legend>Стоимость</legend>
+      <div class="range-filter">
+        <div class="range-controls" data-range>
+          <div class="scale">
+            <div class="bar" data-range-bar></div>
+          </div>
+          <button
+            class="toggle toggle-min"
+            type="button"
+            data-range-toggle="min"
+            aria-label={`Нижняя граница цены, ${priceLabel(lowest)}`}></button>
+          <button
+            class="toggle toggle-max"
+            type="button"
+            data-range-toggle="max"
+            aria-label={`Верхняя граница цены, ${priceLabel(highest)}`}
+          ></button>
+        </div>
+        <div class="price-controls">
+          <label class="min-price"
+            >от<input
+              name="min-price"
+              type="text"
+              inputmode="numeric"
+              value={String(lowest)}
+              data-range-field="min"
+            /></label
+          >
+          <label class="max-price"
+            >до<input
+              name="max-price"
+              type="text"
+              inputmode="numeric"
+              value={String(highest)}
+              data-range-field="max"
+            /></label
+          >
+        </div>
+      </div>
+    </fieldset>
+    <fieldset class="filter-color">
+      <legend>Цвет</legend>
+      <ul>
+        {
+          COLORS.map((color) => (
+            <li class="filter-option">
+              <input
+                class="visually-hidden filter-input filter-input-checkbox"
+                type="checkbox"
+                name="color"
+                value={color.slug}
+                id={`filter-${color.slug}-color`}
+                data-filter-color
+              />
+              <label for={`filter-${color.slug}-color`}>{color.title}</label>
+            </li>
+          ))
+        }
+      </ul>
+    </fieldset>
+    <fieldset class="filter-bluetooth">
+      <legend>Bluetooth</legend>
+      <ul>
+        {
+          BLUETOOTH.map((option) => (
+            <li class="filter-option">
+              <input
+                class="visually-hidden filter-input filter-input-radio"
+                type="radio"
+                name="bluetooth"
+                value={option.value}
+                id={`filter-bluetooth-${option.value}`}
+                checked={option.value === 'any'}
+                data-filter-bluetooth
+              />
+              <label for={`filter-bluetooth-${option.value}`}>
+                {option.title}
+              </label>
+            </li>
+          ))
+        }
+      </ul>
+    </fieldset>
+    <Button class="filter-button" type="submit">Показать</Button>
+  </form>
+</section>
+
+<style>
+  .filters {
+    flex-shrink: 0;
+    width: 270px;
+    background-color: #efefef;
+  }
+
+  .filters::before {
+    content: '';
+    position: absolute;
+    inset: 0 850px 0 0;
+    z-index: 0;
+    margin-left: -2000px;
+    background-color: #eee;
+  }
+
+  .filters-title {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    min-height: 70px;
+    margin: 0;
+    margin-bottom: 70px;
+    padding: 0;
+    padding-top: 23px;
+    font-size: 16px;
+    font-weight: normal;
+    line-height: 24px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    background-color: #dbdbdb;
+  }
+
+  .filters-title span {
+    position: relative;
+    z-index: 10;
+  }
+
+  .filters-title::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    margin-left: calc(50% - 50vw);
+    background-color: #dcdcdc;
+  }
+
+  .filter {
+    position: relative;
+    z-index: 10;
+    width: 200px;
+  }
+
+  .filter-price {
+    margin: 0;
+    margin-bottom: 40px;
+    padding: 0;
+    border: none;
+  }
+
+  .filter-price legend,
+  .filter-color legend,
+  .filter-bluetooth legend {
+    position: relative;
+    margin-bottom: 30px;
+    font-size: 18px;
+    line-height: 24px;
+  }
+
+  .filter-color legend,
+  .filter-bluetooth legend {
+    margin-bottom: 25px;
+  }
+
+  .filter-price legend::before,
+  .filter-color legend::before,
+  .filter-bluetooth legend::before {
+    content: '';
+    position: absolute;
+    top: -15px;
+    left: 0;
+    width: 200px;
+    height: 2px;
+    background-color: var(--color-text);
+  }
+
+  .range-controls {
+    position: relative;
+    margin-bottom: 10px;
+  }
+
+  .range-controls .scale {
+    height: 2px;
+    background-color: #dbdbdb;
+  }
+
+  .range-controls .bar {
+    width: 200px;
+    height: 2px;
+    background-color: #91c92f;
+  }
+
+  .range-controls .toggle {
+    box-sizing: content-box;
+    position: absolute;
+    top: -9px;
+    left: 0;
+    width: 4px;
+    height: 4px;
+    padding: 0;
+    border: 8px solid #fff;
+    border-radius: 50%;
+    background-color: #ababab;
+    box-shadow: 0 2px 1px #cfcfcf;
+    cursor: pointer;
+    transition-duration: 0.2s;
+  }
+
+  .range-controls .toggle:active {
+    transform: scale(1.1);
+  }
+
+  .range-controls .toggle-min {
+    left: -10px;
+  }
+
+  .range-controls .toggle-max {
+    left: 190px;
+  }
+
+  .price-controls {
+    font-size: 0;
+  }
+
+  .price-controls label {
+    display: inline-block;
+    width: 49%;
+    font-family: var(--font-gilroy-light);
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 24px;
+    color: rgb(0 0 0 / 20%);
+  }
+
+  .price-controls input {
+    width: 50px;
+    margin-left: 5px;
+    padding: 0;
+    border: none;
+    font-family: var(--font-gilroy-light);
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 24px;
+    color: rgb(0 0 0 / 20%);
+    background-color: transparent;
+  }
+
+  .filter-color,
+  .filter-bluetooth {
+    margin: 0;
+    margin-bottom: 40px;
+    padding: 0;
+    border: none;
+  }
+
+  .filter-color ul,
+  .filter-bluetooth ul {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-open-sans);
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 20px;
+    list-style: none;
+  }
+
+  .filter-option {
+    min-height: 25px;
+    margin-bottom: 17px;
+    padding-left: 40px;
+  }
+
+  .filter-option label {
+    position: relative;
+    display: block;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .filter-input-checkbox + label::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -40px;
+    width: 23px;
+    height: 23px;
+    border: 2px solid var(--color-text);
+    border-radius: 3px;
+  }
+
+  .filter-input-checkbox:checked + label::after {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -40px;
+    width: 27px;
+    height: 23px;
+    background-image: url('../assets/images/checkbox-on.svg');
+    background-repeat: no-repeat;
+    background-position: 0 0;
+  }
+
+  .filter-input-checkbox:checked + label::before {
+    display: none;
+  }
+
+  .filter-input-checkbox:focus + label::before,
+  .filter-input-radio:focus + label::before {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .filter-option label:hover,
+  .filter-option label:focus {
+    opacity: 0.6;
+  }
+
+  .filter-option label:active {
+    opacity: 1;
+  }
+
+  .filter-input-checkbox:disabled + label::before,
+  .filter-input-checkbox:disabled + label::after {
+    opacity: 0.25;
+  }
+
+  .filter-input-radio + label::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -40px;
+    width: 25px;
+    height: 25px;
+    border: 4px solid var(--color-text);
+    border-radius: 50%;
+  }
+
+  .filter-input-radio:checked + label::after {
+    content: '';
+    position: absolute;
+    top: 5px;
+    left: -32px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: var(--color-text);
+  }
+
+  .filter-button {
+    width: 100%;
+    font-size: 18px;
+    line-height: 24px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+</style>

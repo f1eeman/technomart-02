@@ -1,0 +1,237 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import PageHead from '@/components/page-head.astro'
+import Button from '@/components/button.astro'
+import Field from '@/components/field.astro'
+import { HOME } from '@/data/nav'
+
+const title = 'Личный кабинет — DEVICE'
+const description =
+  'Данные покупателя и история заказов в интернет-магазине DEVICE.'
+---
+
+<Layout {title} {description} inner>
+  <PageHead
+    heading="Личный кабинет"
+    crumbs={[HOME, { title: 'Личный кабинет' }]}
+  />
+  <div class="profile-page" data-profile>
+    <p class="profile-guest">
+      Вы не вошли. <a href="/login">Войдите</a> — и здесь появятся ваши данные и история
+      заказов.
+    </p>
+    <div class="profile-member">
+      <div class="profile-columns">
+        <section class="profile-column" data-notch>
+          <h2 class="profile-title">Данные</h2>
+          <form class="profile-form">
+            <Field
+              label="Имя:"
+              id="profile-name"
+              field="name"
+              name="name"
+              type="text"
+              autocomplete="name"
+              placeholder="Имя Фамилия"
+            />
+            <Field
+              label="E-mail:"
+              id="profile-email"
+              field="email"
+              name="email"
+              type="email"
+              autocomplete="email"
+              placeholder="email@example.com"
+            />
+            <Field
+              label="Телефон:"
+              id="profile-phone"
+              field="phone"
+              name="phone"
+              type="tel"
+              autocomplete="tel"
+              placeholder="+7 900 000 00 00"
+            />
+            <Button class="profile-save" type="submit">Сохранить</Button>
+            <span class="profile-saved" data-profile-saved hidden>
+              Сохранено
+            </span>
+          </form>
+        </section>
+        <section class="profile-column" data-notch>
+          <h2 class="profile-title">Заказы</h2>
+          <p class="profile-note" data-orders-empty>
+            Заказов пока нет. Они появятся здесь после оформления корзины.
+          </p>
+          <ul class="orders" data-orders hidden></ul>
+          <template data-order-template>
+            <li class="order">
+              <p class="order-head">
+                <span class="order-date" data-order-date></span>
+                <span class="order-total" data-order-total></span>
+              </p>
+              <ul class="order-lines" data-order-lines></ul>
+            </li>
+          </template>
+        </section>
+      </div>
+      <p class="profile-exit">
+        <a href="/logout">Выйти из кабинета</a>
+      </p>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  import { initProfile } from '@/scripts/profile'
+
+  initProfile()
+</script>
+
+<style>
+  .profile-page {
+    width: var(--layout-width);
+    margin: 0 auto;
+    margin-bottom: 90px;
+    padding-right: 20px;
+    padding-left: 80px;
+  }
+
+  .profile-guest {
+    width: 560px;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-open-sans);
+    font-size: 15px;
+    font-weight: normal;
+    line-height: 30px;
+  }
+
+  .profile-guest a,
+  .profile-exit a {
+    color: var(--color-text);
+    text-decoration: underline;
+  }
+
+  .profile-guest a:hover,
+  .profile-guest a:focus,
+  .profile-exit a:hover,
+  .profile-exit a:focus {
+    text-decoration: none;
+  }
+
+  :global(body[data-session='guest']) .profile-member {
+    display: none;
+  }
+
+  :global(body[data-session='member']) .profile-guest {
+    display: none;
+  }
+
+  .profile-columns {
+    display: flex;
+    column-gap: 70px;
+  }
+
+  .profile-column {
+    position: relative;
+    width: 515px;
+    padding-top: 30px;
+  }
+
+  .profile-column::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 80px;
+    height: 7px;
+    background-color: var(--color-text);
+  }
+
+  .profile-title {
+    margin: 0;
+    margin-bottom: 35px;
+    padding: 0;
+    font-size: 30px;
+    font-weight: normal;
+    line-height: 36px;
+  }
+
+  .profile-save {
+    width: 200px;
+    text-align: center;
+  }
+
+  .profile-saved {
+    margin-left: 20px;
+    font-family: var(--font-open-sans);
+    font-size: 13px;
+    font-weight: normal;
+    line-height: 20px;
+    color: rgb(0 0 0 / 50%);
+  }
+
+  .profile-note {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-open-sans);
+    font-size: 15px;
+    font-weight: normal;
+    line-height: 30px;
+    color: var(--color-surface-dark);
+  }
+
+  .orders {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .orders .order {
+    padding-block: 18px;
+    border-bottom: 2px solid #e5e5e5;
+  }
+
+  .order-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin: 0;
+    margin-bottom: 10px;
+    padding: 0;
+  }
+
+  .order-date {
+    font-size: 18px;
+    line-height: 24px;
+  }
+
+  .order-total {
+    font-family: var(--font-gilroy-light);
+    font-size: 18px;
+    line-height: 24px;
+    color: var(--color-surface-dark);
+  }
+
+  .order-lines {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-open-sans);
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 24px;
+    color: rgb(0 0 0 / 50%);
+    list-style: none;
+  }
+
+  .profile-exit {
+    margin: 0;
+    margin-top: 50px;
+    padding: 0;
+    font-family: var(--font-open-sans);
+    font-size: 15px;
+    font-weight: normal;
+    line-height: 30px;
+  }
+</style>

@@ -1,0 +1,433 @@
+---
+import type { ImageMetadata } from 'astro'
+import Button from '@/components/button.astro'
+import slide1 from '@/assets/images/slider-1.png'
+import slide2 from '@/assets/images/slider-2.png'
+import slide3 from '@/assets/images/slider-3.png'
+
+interface Slide {
+  heading: string
+  number: string
+  numberClass?: string
+  sloganLines: string[]
+  promo: string
+  href: string
+  image: ImageMetadata
+  imageClass: string
+  width: number
+  height: number
+  alt: string
+  charactersClass: string
+  characteristics: { value: string; label: string }[]
+}
+
+const SLIDES: Slide[] = [
+  {
+    heading: 'Селфи-палка',
+    number: '01',
+    sloganLines: ['Делай селфи,', 'как Бен Стиллер!'],
+    promo:
+      'Самая длинная палка для селфи доступна в нашем магазине. Восемь (Восемь, Карл!) метров длиной и весом 5 килограмм.',
+    href: '/product/giant-selfie-stick',
+    image: slide1,
+    imageClass: 'popular-item-selfie',
+    width: 384,
+    height: 486,
+    alt: 'Селфи-палка длиной 8 м и весом 5 кг',
+    charactersClass: 'selfie-characteristics',
+    characteristics: [
+      { value: '8,5 м', label: 'Длина палки' },
+      { value: '5 кг', label: 'Вес палки' },
+      { value: 'Карбон', label: 'Материал' },
+    ],
+  },
+  {
+    heading: 'Фитнес-браслет',
+    number: '02',
+    numberClass: 'number-two',
+    sloganLines: ['Худеем', 'правильно!'],
+    promo:
+      'Мотивирующие фитнес-браслеты помогут найти в себе силы не пропускать занятия и соблюдать диету.',
+    href: '/product/fitness-bracelet-simple',
+    image: slide2,
+    imageClass: 'popular-item-fitness-bracelet',
+    width: 345,
+    height: 485,
+    alt: 'Фитнес-браслет',
+    charactersClass: 'fitness-bracelet-characteristics',
+    characteristics: [{ value: '48 часов', label: 'Без подзарядки' }],
+  },
+  {
+    heading: 'Квадрокоптер',
+    number: '03',
+    numberClass: 'number-three',
+    sloganLines: ['Порхает как бабочка, жалит как пчела!'],
+    promo:
+      'Этот обычный, на первый взгляд, квадрокоптер оснащен мощным лазером, замаскированным под стандартную камеру.',
+    href: '/product/quadcopter-laser',
+    image: slide3,
+    imageClass: 'popular-item-quadrocopter',
+    width: 526,
+    height: 334,
+    alt: 'Квадрокоптер с лазером',
+    charactersClass: 'quadrocopter-characteristics',
+    characteristics: [
+      { value: '800 м', label: 'Дальность полета' },
+      { value: '50 м', label: 'Радиус поражения' },
+    ],
+  },
+]
+
+const ORDINALS = ['Первый', 'Второй', 'Третий']
+---
+
+<section class="popular-items" data-slider>
+  <div class="container">
+    <h2 class="visually-hidden">Популярные товары</h2>
+    <ol class="popular-items-list">
+      {
+        SLIDES.map((slide, index) => (
+          <li
+            class:list={['popular-item', index === 0 && 'current']}
+            data-slide={String(index)}
+          >
+            <h3 class="visually-hidden">{slide.heading}</h3>
+            <div class="popular-item-column">
+              <p class:list={['popular-item-image-box', slide.imageClass]}>
+                <img
+                  class="popular-item-image"
+                  src={slide.image.src}
+                  width={slide.width}
+                  height={slide.height}
+                  alt={slide.alt}
+                />
+              </p>
+              <div class="popular-item-details">
+                <span class:list={['popular-item-number', slide.numberClass]}>
+                  {slide.number}
+                </span>
+                <p class="popular-item-slogan">
+                  {slide.sloganLines.map((line, at) => (
+                    <>
+                      {at > 0 && <br />}
+                      {line}
+                    </>
+                  ))}
+                </p>
+                <p class="popular-item-promo">{slide.promo}</p>
+                <Button as="a" class="more-details" href={slide.href}>
+                  Подробнее
+                </Button>
+                <table
+                  class:list={[
+                    'popular-item-characteristics-list',
+                    slide.charactersClass,
+                  ]}
+                >
+                  <tbody>
+                    <tr class="value">
+                      {slide.characteristics.map((item) => (
+                        <td>{item.value}</td>
+                      ))}
+                    </tr>
+                    <tr class="properties">
+                      {slide.characteristics.map((item) => (
+                        <td>{item.label}</td>
+                      ))}
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+    <ul class="slides-switches">
+      {
+        ORDINALS.map((ordinal, index) => (
+          <li class="slide-radio">
+            <button
+              class:list={['slide-button', index === 0 && 'active']}
+              type="button"
+              data-slide-to={String(index)}
+              aria-pressed={index === 0 ? 'true' : 'false'}
+            >
+              <span class="visually-hidden">{ordinal} слайд</span>
+            </button>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .popular-items {
+    position: relative;
+    top: -65px;
+  }
+
+  .popular-items .container {
+    position: relative;
+    min-height: 490px;
+  }
+
+  .popular-items-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .popular-item {
+    display: none;
+  }
+
+  .popular-item.current {
+    display: block;
+  }
+
+  .popular-item-column {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 1040px;
+    margin: 0 auto;
+  }
+
+  .popular-item-selfie {
+    width: 384px;
+    height: 486px;
+    margin: 0;
+    margin-left: 30px;
+    padding: 0;
+  }
+
+  .popular-item-fitness-bracelet {
+    width: 345px;
+    height: 485px;
+    margin: 0;
+    margin-left: 56px;
+    padding: 0;
+  }
+
+  .popular-item-quadrocopter {
+    width: 526px;
+    height: 334px;
+    margin: 0;
+    margin-top: 57px;
+    margin-left: -30px;
+    padding: 0;
+  }
+
+  .popular-item-details {
+    position: relative;
+    width: 500px;
+    padding-top: 72px;
+  }
+
+  .popular-item-details::before {
+    content: '';
+    position: absolute;
+    top: 22px;
+    left: 0;
+    width: 100px;
+    height: 7px;
+    background-color: var(--color-bg);
+  }
+
+  .popular-item-number {
+    position: absolute;
+    top: -60px;
+    right: -15px;
+    z-index: 10;
+    font-size: 179px;
+    line-height: 179px;
+    color: var(--color-text-inverse);
+  }
+
+  .number-two {
+    right: -12px;
+  }
+
+  .number-three {
+    right: -10px;
+  }
+
+  .popular-item-slogan {
+    position: relative;
+    z-index: 10;
+    margin: 0;
+    margin-bottom: 25px;
+    padding: 0;
+    font-size: 47px;
+    line-height: 56px;
+  }
+
+  .popular-item-promo {
+    margin: 0;
+    margin-bottom: 50px;
+    padding: 0;
+    font-family: var(--font-open-sans);
+    font-size: 15px;
+    font-weight: normal;
+    line-height: 30px;
+  }
+
+  .more-details {
+    margin-bottom: 50px;
+    padding-right: 43px;
+    padding-left: 44px;
+  }
+
+  .popular-item-characteristics-list .value {
+    font-family: var(--font-gilroy-light);
+    font-size: 36px;
+    font-weight: normal;
+    line-height: 48px;
+  }
+
+  .popular-item-characteristics-list .properties {
+    font-family: var(--font-open-sans);
+    font-size: 13px;
+    font-weight: normal;
+    line-height: 20px;
+  }
+
+  .selfie-characteristics td:not(:last-child) {
+    padding-right: 80px;
+  }
+
+  .quadrocopter-characteristics td:not(:last-child) {
+    padding-right: 50px;
+  }
+
+  .slides-switches {
+    position: absolute;
+    right: 100px;
+    bottom: 145px;
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 100px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .slide-radio {
+    margin: 0;
+    margin-right: 21px;
+    padding: 0;
+  }
+
+  .slide-radio:last-of-type {
+    margin-right: 0;
+  }
+
+  .slide-button {
+    position: relative;
+    display: block;
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    padding: 0;
+    border: 2px solid #000;
+    border-radius: 50%;
+    background-color: transparent;
+    cursor: pointer;
+  }
+
+  .slide-button.active::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: block;
+    width: 8px;
+    height: 8px;
+    margin-top: -4px;
+    margin-left: -4px;
+    border: 2px solid #000;
+    border-radius: 50%;
+    background-color: transparent;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    @keyframes slide-photo {
+      from {
+        transform: translateX(120px);
+        opacity: 0;
+      }
+
+      to {
+        transform: none;
+        opacity: 1;
+      }
+    }
+
+    @keyframes slide-number {
+      from {
+        transform: translateX(-64px);
+        opacity: 0;
+      }
+
+      to {
+        transform: none;
+        opacity: 1;
+      }
+    }
+
+    @keyframes slide-notch {
+      from {
+        transform: scaleX(0);
+      }
+
+      to {
+        transform: scaleX(1);
+      }
+    }
+
+    @keyframes slide-text {
+      from {
+        transform: translateY(12px);
+        clip-path: inset(0 0 100% 0);
+        opacity: 0;
+      }
+
+      to {
+        transform: none;
+        clip-path: inset(0 0 0 0);
+        opacity: 1;
+      }
+    }
+
+    .popular-item.current .popular-item-image-box {
+      animation: slide-photo 600ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .popular-item.current .popular-item-number {
+      animation: slide-number 600ms cubic-bezier(0.16, 1, 0.3, 1) 80ms backwards;
+    }
+
+    .popular-item.current .popular-item-details::before {
+      transform-origin: left center;
+      animation: slide-notch 260ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .popular-item.current .popular-item-slogan {
+      animation: slide-text 400ms cubic-bezier(0.16, 1, 0.3, 1) 160ms backwards;
+    }
+
+    .popular-item.current .popular-item-promo {
+      animation: slide-text 400ms cubic-bezier(0.16, 1, 0.3, 1) 240ms backwards;
+    }
+
+    .popular-item.current .more-details {
+      animation: slide-text 400ms cubic-bezier(0.16, 1, 0.3, 1) 320ms backwards;
+    }
+
+    .popular-item.current .popular-item-characteristics-list {
+      animation: slide-text 400ms cubic-bezier(0.16, 1, 0.3, 1) 400ms backwards;
+    }
+  }
+</style>

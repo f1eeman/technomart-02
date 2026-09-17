@@ -1,0 +1,160 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import PageHead from '@/components/page-head.astro'
+import ProductCard from '@/components/product-card.astro'
+import { CATEGORIES, PRODUCTS } from '@/data/catalog'
+import { HOME } from '@/data/nav'
+
+const title = 'Поиск по сайту — DEVICE'
+const description =
+  'Поиск по названиям и описаниям товаров DEVICE: введите слово — покажем, что нашлось в магазине.'
+
+const HINTS = [
+  { label: 'Раздел', words: ['квадрокоптер', 'браслет', 'часы', 'шлем'] },
+  { label: 'Тип', words: ['водостойкий', 'складной', 'моторизованный'] },
+  { label: 'Слово из названия', words: ['палка', 'детский', 'гоночный'] },
+]
+---
+
+<Layout {title} {description} inner>
+  <PageHead heading="Поиск по сайту" crumbs={[HOME, { title: 'Поиск' }]} />
+  <div class="search-page">
+    <p class="search-found" data-search-found hidden></p>
+    <p class="search-idle" data-search-idle hidden>
+      Поиск смотрит названия и описания всех {PRODUCTS.length} товаров магазина. Введите
+      слово в поле наверху — «палка», «квадрокоптер», «водостойкий», «детский». Описания
+      мы писали сами, так что товар иногда находится по шутке про него, а не по названию.
+    </p>
+    <p class="search-empty" data-search-empty hidden>
+      По запросу «<span data-search-echo></span>» ничего не нашлось. Попробуйте
+      слово покороче или откройте каталог — он разложен по {CATEGORIES.length}
+      разделам. Возможно, такой товар у нас есть, но называется так, что найти его
+      невозможно.
+    </p>
+    <ul class="search-list" data-search-list>
+      {PRODUCTS.map((product) => <ProductCard {product} searchable />)}
+    </ul>
+    <dl class="search-hints">
+      {
+        HINTS.map((hint) => (
+          <div class="search-hint">
+            <dt>{hint.label}</dt>
+            <dd>
+              {hint.words.map((word, at) => (
+                <>
+                  {at > 0 && ', '}
+                  <a href={`/search?q=${encodeURIComponent(word)}`}>{word}</a>
+                </>
+              ))}
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+    <p class="search-links">
+      <a href="/catalog">Каталог товаров</a> · <a href="/">На главную</a>
+    </p>
+  </div>
+</Layout>
+
+<script>
+  import { initSearch } from '@/scripts/search'
+
+  initSearch()
+</script>
+
+<style>
+  .search-page {
+    width: var(--layout-width);
+    margin: 0 auto;
+    margin-bottom: 90px;
+    padding-right: 20px;
+    padding-left: 80px;
+  }
+
+  .search-found {
+    margin: 0;
+    margin-bottom: 40px;
+    padding: 0;
+    font-family: var(--font-open-sans);
+    font-size: 15px;
+    font-weight: normal;
+    line-height: 30px;
+    color: rgb(0 0 0 / 50%);
+  }
+
+  .search-idle,
+  .search-empty {
+    width: 660px;
+    margin: 0;
+    margin-bottom: 40px;
+    padding: 0;
+    font-family: var(--font-open-sans);
+    font-size: 15px;
+    font-weight: normal;
+    line-height: 30px;
+  }
+
+  .search-list {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 40px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .search-hints {
+    margin: 0;
+    margin-top: 15px;
+    padding: 0;
+  }
+
+  .search-hint {
+    display: flex;
+    align-items: baseline;
+    column-gap: 20px;
+    padding-block: 12px;
+    border-top: 2px solid #e5e5e5;
+  }
+
+  .search-hints dt {
+    width: 200px;
+    font-size: 16px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .search-hints dd {
+    margin: 0;
+    font-family: var(--font-open-sans);
+    font-size: 15px;
+    font-weight: normal;
+    line-height: 30px;
+    color: rgb(0 0 0 / 30%);
+  }
+
+  .search-hints a,
+  .search-links a {
+    color: var(--color-text);
+    text-decoration: underline;
+  }
+
+  .search-hints a:hover,
+  .search-hints a:focus,
+  .search-links a:hover,
+  .search-links a:focus {
+    text-decoration: none;
+  }
+
+  .search-links {
+    margin: 0;
+    margin-top: 40px;
+    padding: 0;
+    font-family: var(--font-open-sans);
+    font-size: 15px;
+    font-weight: normal;
+    line-height: 30px;
+    color: rgb(0 0 0 / 30%);
+  }
+</style>

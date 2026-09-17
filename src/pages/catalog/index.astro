@@ -1,0 +1,44 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import PageHead from '@/components/page-head.astro'
+import CatalogTiles from '@/components/catalog-tiles.astro'
+import { CATEGORIES, PRODUCTS } from '@/data/catalog'
+import { HOME } from '@/data/nav'
+
+const title = 'Каталог товаров — DEVICE'
+const description = `Шесть разделов и ${String(PRODUCTS.length)} товаров: виртуальная реальность, моноподы, экшн-камеры, фитнес-браслеты, умные часы и квадрокоптеры.`
+---
+
+<Layout {title} {description} inner>
+  <PageHead
+    heading="Каталог товаров"
+    crumbs={[HOME, { title: 'Каталог товаров' }]}
+  />
+  <div class="catalog-page">
+    <p class="catalog-lead">
+      {CATEGORIES.length} разделов и {PRODUCTS.length} товаров. Выберите раздел —
+      внутри фильтр по цене, цвету и наличию Bluetooth.
+    </p>
+  </div>
+  <CatalogTiles counts inner />
+</Layout>
+
+<style>
+  .catalog-page {
+    width: var(--layout-width);
+    margin: 0 auto;
+    padding-right: 20px;
+    padding-left: 80px;
+  }
+
+  .catalog-lead {
+    width: 560px;
+    margin: 0;
+    margin-bottom: 55px;
+    padding: 0;
+    font-family: var(--font-open-sans);
+    font-size: 15px;
+    font-weight: normal;
+    line-height: 30px;
+  }
+</style>

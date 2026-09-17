@@ -1,305 +1,625 @@
 ---
-const LINKS = [
-  { href: '#sample', label: 'Раздел' },
-  { href: '#request', label: 'Заявка' },
-  { href: '#contacts', label: 'Контакты' },
+import logo from '@/assets/images/logo.png'
+import { CATEGORIES } from '@/data/catalog'
+
+interface Props {
+  inner?: boolean
+  category?: string | undefined
+}
+
+const { inner = false, category } = Astro.props
+
+const anchor = (id: string): string => (inner ? `/#${id}` : `#${id}`)
+
+const BOXES = [
+  ['virtual-reality', 'monopods', 'action-cameras'],
+  ['fitness-bracelets', 'smart-watches'],
+  ['quadcopters'],
 ]
+
+const boxes = BOXES.map((slugs) =>
+  slugs.map((slug) => {
+    const found = CATEGORIES.find((item) => item.slug === slug)
+
+    if (found === undefined) throw new Error(`Нет категории ${slug}`)
+
+    return found
+  }),
+)
 ---
 
-<header class="header">
-  <div class="container row">
-    <a class="logo" href="/">Лендинг</a>
-
-    <details class="menu" data-menu>
-      <summary
-        class="menu-toggle"
-        data-menu-toggle
-        data-menu-label-open="Открыть меню"
-        data-menu-label-close="Закрыть меню"
-      >
-        <span class="visually-hidden" data-menu-label>Открыть меню</span>
-        <span class="burger" aria-hidden="true"></span>
-      </summary>
-      <nav class="nav" aria-label="Разделы страницы">
-        <ul class="nav-list">
-          {
-            LINKS.map((link) => (
-              <li>
-                <a class="nav-link" href={link.href}>
-                  {link.label}
-                </a>
-              </li>
-            ))
-          }
+<header class:list={['main-header', inner && 'inner']}>
+  <div class="container">
+    <div class="main-header-wrapper">
+      <a class="main-header-logo" href={inner ? '/' : undefined}>
+        <img
+          class="main-header-logo-image"
+          src={logo.src}
+          width="164"
+          height="36"
+          alt="Логотип интернет магазина «DEVICE»"
+        />
+      </a>
+      <div class="user-tools">
+        <div class="user-tools-item user-tools-box">
+          <form class="user-tools-form" action="/search" method="get">
+            <input
+              class="user-tools-search"
+              type="search"
+              name="q"
+              id="user-search"
+              data-search-query
+              placeholder="Поиск по сайту"
+            />
+            <label for="user-search"
+              ><span class="visually-hidden">Поиск по сайту</span></label
+            >
+            <button class="user-tools-submit" type="submit">Найти</button>
+          </form>
+        </div>
+        <ul class="user-tools-item user-menu">
+          <li class="user-menu-item user-menu-name">
+            <a class="name-link" href="/profile" data-session-name
+              >Светлана Дурова</a
+            >
+          </li>
+          <li class="user-menu-item user-menu-logout">
+            <a class="logout-link" href="/logout">Выйти</a>
+          </li>
+          <li class="user-menu-item user-menu-login">
+            <a class="login-link" href="/login" data-modal-open="login">Войти</a
+            >
+          </li>
+        </ul>
+        <a
+          class="user-tools-item user-tools-compare"
+          href="/compare"
+          data-compare-bump>Сравнить<span data-compare-count></span></a
+        >
+        <a
+          class="user-tools-item user-tools-cart"
+          href="/cart"
+          data-cart-target
+          data-cart-bump>Корзина<span data-cart-count></span></a
+        >
+      </div>
+      <nav class="main-navigation">
+        <ul class="site-navigation">
+          <li class="site-navigation__item site-navigation__catalog">
+            <a class="site-navigation__main-link" href="/catalog"
+              >Каталог товаров</a
+            >
+            <div class="site-navigation__catalog-shell">
+              <div class="site-navigation__catalog-list">
+                {
+                  boxes.map((box) => (
+                    <p class="site-navigation__catalog-box">
+                      {box.map((item) =>
+                        item.slug === category ? (
+                          <span class="site-navigation__catalog-item site-navigation__current-item">
+                            {item.title}
+                          </span>
+                        ) : (
+                          <a
+                            class="site-navigation__catalog-item"
+                            href={`/catalog/${item.slug}`}
+                          >
+                            {item.title}
+                          </a>
+                        ),
+                      )}
+                    </p>
+                  ))
+                }
+              </div>
+            </div>
+          </li>
+          <li class="site-navigation__item site-navigation__delivery">
+            <a href={anchor('service-delivery')}>Доставка</a>
+          </li>
+          <li class="site-navigation__item site-navigation__warranty">
+            <a href={anchor('service-warranty')}>Гарантия</a>
+          </li>
+          <li class="site-navigation__item site-navigation__contacts">
+            <a href={anchor('contacts')}>Контакты</a>
+          </li>
         </ul>
       </nav>
-    </details>
+    </div>
   </div>
 </header>
 
-<script>
-  import { initMenu } from '@/scripts/menu'
-
-  initMenu()
-</script>
-
 <style>
-  .header {
+  .main-header {
+    padding-top: 40px;
+  }
+
+  .main-header.inner {
+    margin-bottom: 43px;
+  }
+
+  .main-header-wrapper {
     position: relative;
-    z-index: 1;
-    padding-block: 16px;
+    min-height: 313px;
+    padding: 45px 60px 35px;
+    color: var(--color-text);
+    background-color: var(--color-accent-soft);
   }
 
-  .row {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    min-block-size: 36px;
+  .main-header.inner .main-header-wrapper {
+    min-height: 186px;
   }
 
-  .logo {
-    flex: none;
-    margin-inline-end: auto;
-    font-weight: 700;
-    font-size: 20px;
-    line-height: 36px;
+  .main-header-wrapper a {
+    color: var(--color-text);
   }
 
-  .nav-link {
+  .main-header-logo {
+    position: absolute;
+    top: -23px;
+    left: 60px;
     display: block;
-    font-size: 14px;
+    width: 164px;
+    height: 36px;
+  }
+
+  .main-header-logo[href]:hover .main-header-logo-image,
+  .main-header-logo[href]:focus .main-header-logo-image {
+    opacity: 0.6;
+  }
+
+  .main-header-logo[href]:active .main-header-logo-image {
+    opacity: 0.3;
+  }
+
+  .user-tools {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 30px;
+    font-family: var(--font-open-sans);
+    font-size: 15px;
+    font-weight: normal;
+    line-height: 30px;
+  }
+
+  .user-tools-item:not(:last-child) {
+    margin-right: 20px;
+  }
+
+  .user-tools .user-tools-box {
+    flex-shrink: 0;
+    width: 440px;
+    margin-right: auto;
+  }
+
+  .user-tools-form {
+    display: flex;
+  }
+
+  .user-tools-search {
+    width: 100%;
+    padding-right: 20px;
+    padding-left: 40px;
+    border: none;
+    font-family: var(--font-open-sans);
+    font-size: 15px;
+    font-weight: normal;
+    line-height: 30px;
+    letter-spacing: 0.01em;
+    color: rgb(0 0 0 / 30%);
+    background-color: transparent;
+  }
+
+  .user-tools-form label {
+    position: relative;
+  }
+
+  .user-tools-form label::before {
+    content: '';
+    position: absolute;
+    top: 19px;
+    left: -345px;
+    width: 16px;
+    height: 16px;
+    background-image: url('../assets/images/search.svg');
+    background-repeat: no-repeat;
+    background-position: 0 0;
+  }
+
+  .user-tools-form label::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 350px;
+    height: 2px;
+    opacity: 0;
+    background-color: var(--color-text);
+    transition-duration: 0.2s;
+  }
+
+  .user-tools-search:hover {
+    color: rgb(0 0 0 / 60%);
+  }
+
+  .user-tools-search:focus,
+  .user-tools-search:active {
+    color: rgb(0 0 0);
+    outline: none;
+  }
+
+  .user-tools-search:focus + label::after,
+  .user-tools-search:active + label::after {
+    opacity: 1;
+  }
+
+  .user-tools-submit {
+    box-sizing: border-box;
+    padding: 7px 20px;
+    border: 2px solid var(--color-text);
+    font-family: var(--font-open-sans);
+    font-size: 15px;
+    font-weight: normal;
+    line-height: 35px;
+    letter-spacing: 0.01em;
+    visibility: hidden;
+    opacity: 0;
+    background-color: transparent;
+    transition-duration: 0.2s;
+  }
+
+  .user-tools-search:focus ~ .user-tools-submit,
+  .user-tools-search:active ~ .user-tools-submit {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  .user-tools-submit:hover,
+  .user-tools-submit:focus {
+    color: var(--color-text-inverse);
+    background-color: var(--color-text);
+  }
+
+  .user-tools-submit:active {
+    color: rgb(255 255 255 / 30%);
+    background-color: var(--color-text);
+  }
+
+  .user-menu {
+    display: flex;
+    flex-wrap: wrap;
+    width: 260px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .name-link {
+    position: relative;
+    width: 160px;
+    margin-right: 20px;
+    padding-left: 25px;
+    text-align: right;
+  }
+
+  .name-link::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 13px;
+    height: 12px;
+    margin-top: -5px;
+    background-image: url('../assets/images/user.png');
+    background-repeat: no-repeat;
+    background-position: 0 0;
+  }
+
+  .name-link:hover::before,
+  .name-link:focus::before {
+    opacity: 0.6;
+  }
+
+  .name-link:active::before {
+    opacity: 0.3;
+  }
+
+  .login-link {
+    position: relative;
+    padding-left: 25px;
+  }
+
+  .login-link::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 13px;
+    height: 12px;
+    margin-top: -6px;
+    background-image: url('../assets/images/user.png');
+    background-repeat: no-repeat;
+    background-position: 0 0;
+  }
+
+  .login-link:hover::before,
+  .login-link:focus::before {
+    opacity: 0.6;
+  }
+
+  .login-link:active::before {
+    opacity: 0.3;
+  }
+
+  .user-tools-compare {
+    position: relative;
+    min-width: 100px;
+    padding-left: 23px;
     white-space: nowrap;
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
-    transition: color 180ms cubic-bezier(0.2, 0.8, 0.25, 1);
   }
 
-  @media (width < 1024px) {
-    .menu {
-      flex: none;
-    }
+  .user-tools-compare::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 2px;
+    width: 10px;
+    height: 10px;
+    margin-top: -5px;
+    background-image: url('../assets/images/compare.svg');
+    background-repeat: no-repeat;
+    background-position: 0 0;
+  }
 
-    .menu-toggle {
-      position: relative;
-      display: grid;
-      place-content: center;
-      inline-size: 36px;
-      block-size: 36px;
-      border: 1px solid var(--color-border-chip);
-      border-radius: var(--radius-control);
-      background-color: var(--color-surface-chip);
-      list-style: none;
-      cursor: pointer;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
-      touch-action: manipulation;
-      transition: background-color 180ms cubic-bezier(0.2, 0.8, 0.25, 1);
-    }
+  .user-tools-compare:hover::before,
+  .user-tools-compare:focus::before {
+    opacity: 0.6;
+  }
 
-    .menu-toggle::-webkit-details-marker {
-      display: none;
-    }
+  .user-tools-compare:active::before {
+    opacity: 0.3;
+  }
 
-    .menu-toggle::after {
-      content: '';
-      position: absolute;
-      inset: -4px;
-    }
+  .user-tools-cart {
+    position: relative;
+    min-width: 100px;
+    padding-left: 35px;
+    white-space: nowrap;
+    text-align: right;
+  }
 
-    .menu-toggle:focus-visible {
-      outline: 2px solid var(--color-accent);
-      outline-offset: 3px;
-    }
+  .user-tools-cart::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 14px;
+    width: 12px;
+    height: 12px;
+    margin-top: -6px;
+    background-image: url('../assets/images/cart.svg');
+    background-repeat: no-repeat;
+    background-position: 0 0;
+  }
 
-    .menu-toggle:active {
-      background-color: color-mix(
-        in srgb,
-        var(--color-surface-chip) 86%,
-        var(--color-text)
-      );
-      transition-duration: 90ms;
-    }
+  .user-tools-cart:hover::before,
+  .user-tools-cart:focus::before {
+    opacity: 0.6;
+  }
 
-    .burger,
-    .burger::before,
-    .burger::after {
-      inline-size: 20px;
-      block-size: 2px;
-      border-radius: 1px;
-      background-color: var(--color-text);
+  .user-tools-cart:active::before {
+    opacity: 0.3;
+  }
+
+  .user-menu-name,
+  .user-menu-logout {
+    display: none;
+  }
+
+  :global(body[data-session='member']) .user-menu-name,
+  :global(body[data-session='member']) .user-menu-logout {
+    display: block;
+  }
+
+  :global(body[data-session='member']) .user-menu-login {
+    display: none;
+  }
+
+  .site-navigation {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    list-style: none;
+  }
+
+  .site-navigation__item {
+    width: 140px;
+  }
+
+  .site-navigation__current-item {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .site-navigation__catalog {
+    position: relative;
+    width: 300px;
+    margin-right: 240px;
+  }
+
+  .site-navigation__catalog .site-navigation__main-link {
+    position: relative;
+    display: inline-block;
+    width: 250px;
+    vertical-align: baseline;
+  }
+
+  .site-navigation__catalog .site-navigation__main-link::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 0;
+    width: 16px;
+    height: 2px;
+    margin-top: -1px;
+    background-color: #b8a974;
+    transition-timing-function: ease-in-out;
+    transition-duration: 0.1s;
+  }
+
+  .site-navigation__catalog .site-navigation__main-link::before {
+    content: '';
+    position: absolute;
+    top: 4px;
+    right: 7px;
+    width: 2px;
+    height: 16px;
+    background-color: #b8a974;
+    transition-timing-function: ease-in-out;
+    transition-duration: 0.1s;
+  }
+
+  .site-navigation__catalog .site-navigation__main-link:hover::after,
+  .site-navigation__catalog .site-navigation__main-link:focus::after,
+  .site-navigation__catalog .site-navigation__main-link:hover::before,
+  .site-navigation__catalog .site-navigation__main-link:focus::before {
+    opacity: 0.6;
+  }
+
+  .site-navigation__catalog .site-navigation__main-link:active::after,
+  .site-navigation__catalog .site-navigation__main-link:active::before {
+    opacity: 0.3;
+  }
+
+  .site-navigation__delivery {
+    margin-right: 20px;
+  }
+
+  .site-navigation__warranty {
+    margin-right: auto;
+  }
+
+  .site-navigation__contacts {
+    text-align: right;
+  }
+
+  .site-navigation__catalog-shell {
+    position: absolute;
+    left: -60px;
+    z-index: 100;
+    padding-bottom: 60px;
+    visibility: hidden;
+    clip-path: inset(0 0 100% 0);
+    pointer-events: none;
+  }
+
+  .site-navigation__catalog-list {
+    display: flex;
+    flex-wrap: wrap;
+    width: 1160px;
+    padding: 20px 60px 35px;
+    font-family: var(--font-open-sans);
+    font-size: 15px;
+    font-weight: normal;
+    line-height: 36px;
+    letter-spacing: 0.01em;
+    text-transform: none;
+    color: var(--color-text);
+    pointer-events: auto;
+    background-color: var(--color-accent-soft);
+    box-shadow: 0 20px 30px rgb(0 0 0 / 22%);
+  }
+
+  .site-navigation__catalog-box {
+    display: flex;
+    flex-flow: column wrap;
+    width: 160px;
+    margin: 0;
+    margin-right: 40px;
+    padding: 0;
+  }
+
+  .site-navigation__catalog-box:first-child {
+    width: 200px;
+  }
+
+  .site-navigation__catalog a:hover + .site-navigation__catalog-shell,
+  .site-navigation__catalog a:focus + .site-navigation__catalog-shell,
+  .site-navigation__catalog-shell:hover,
+  .site-navigation__catalog-shell:focus-within {
+    visibility: visible;
+    clip-path: inset(0 0 0 0);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .site-navigation__catalog-shell {
       transition:
-        transform 180ms cubic-bezier(0.2, 0.8, 0.25, 1),
-        background-color 180ms cubic-bezier(0.2, 0.8, 0.25, 1);
-    }
-
-    .burger {
-      position: relative;
-    }
-
-    .burger::before,
-    .burger::after {
-      content: '';
-      position: absolute;
-      inset-inline-start: 0;
-    }
-
-    .burger::before {
-      inset-block-start: -6px;
-    }
-
-    .burger::after {
-      inset-block-start: 6px;
-    }
-
-    @media (hover: hover) and (pointer: fine) {
-      .menu-toggle:hover {
-        background-color: color-mix(
-          in srgb,
-          var(--color-surface-chip) 92%,
-          var(--color-text)
-        );
-      }
-
-      .menu[open] .menu-toggle:hover .burger {
-        background-color: transparent;
-      }
-    }
-
-    .menu[open] .burger {
-      background-color: transparent;
-    }
-
-    .menu[open] .burger::before {
-      transform: translateY(6px) rotate(45deg);
-    }
-
-    .menu[open] .burger::after {
-      transform: translateY(-6px) rotate(-45deg);
-    }
-
-    .menu::details-content {
-      transition: content-visibility 180ms allow-discrete;
-    }
-
-    .nav {
-      position: absolute;
-      inset-inline: 0;
-      inset-block-start: 100%;
-      z-index: 10;
-      block-size: 0;
-      border-end-end-radius: var(--radius-tab);
-      border-end-start-radius: var(--radius-tab);
-      background-color: var(--color-surface-inverse);
-      overflow: hidden;
-      transition: block-size 180ms cubic-bezier(0.2, 0.8, 0.25, 1);
-    }
-
-    .menu[open] .nav {
-      block-size: auto;
-    }
-
-    .nav-list {
-      max-block-size: calc(100dvh - var(--header-height));
-      padding: 8px 16px 16px;
-      overflow-y: auto;
-    }
-
-    .nav-link {
-      padding-block: 10px;
-      padding-inline: 8px;
-      border-radius: var(--radius-control);
-      color: var(--color-text-inverse-muted);
-      transition-property: color, background-color;
-    }
-
-    @media (hover: hover) and (pointer: fine) {
-      .nav-link:hover {
-        color: var(--color-text-inverse);
-      }
-    }
-
-    .nav-link:active {
-      background-color: var(--color-surface-glass);
-      color: var(--color-text-inverse);
+        clip-path 200ms cubic-bezier(0.4, 0, 0.2, 1),
+        visibility 200ms;
     }
   }
 
-  @media (width >= 1024px) {
-    .menu {
-      flex: 1;
-    }
-
-    .menu-toggle {
-      display: none;
-    }
-
-    .menu::details-content {
-      block-size: auto;
-      content-visibility: visible;
-    }
-
-    .nav-list {
-      display: flex;
-      gap: 32px;
-      justify-content: flex-end;
-    }
-
-    .nav-link {
-      position: relative;
-      color: var(--color-text-muted);
-      transition-property: color, transform;
-    }
-
-    .nav-link::after {
-      content: '';
-      position: absolute;
-      inset-block-end: -4px;
-      inset-inline: 0;
-      block-size: 2px;
-      border-radius: 1px;
-      background-color: currentcolor;
-      transform: scaleX(0);
-      transform-origin: right;
-      transition: transform 180ms cubic-bezier(0.2, 0.8, 0.25, 1);
-    }
-
-    .nav-link:focus-visible {
-      outline: 2px solid var(--color-accent);
-      outline-offset: 4px;
-    }
-
-    .nav-link:active {
-      color: var(--color-text);
-      transform: scale(0.97);
-    }
-
-    @media (hover: hover) and (pointer: fine) {
-      .nav-link:hover {
-        color: var(--color-text);
+  @media (prefers-reduced-motion: no-preference) {
+    @keyframes count-bump-up {
+      0% {
+        transform: scale(1);
       }
 
-      .nav-link:hover::after {
-        transform: scaleX(1);
-        transform-origin: left;
+      40% {
+        transform: scale(1.5);
+      }
+
+      100% {
+        transform: scale(1);
       }
     }
-  }
 
-  @media (prefers-reduced-motion: reduce) {
-    .nav,
-    .nav-link,
-    .nav-link::after,
-    .menu-toggle,
-    .burger,
-    .burger::before,
-    .burger::after,
-    .menu::details-content {
-      transition: none;
+    @keyframes count-bump-down {
+      0% {
+        transform: scale(1);
+      }
+
+      40% {
+        transform: scale(0.7);
+      }
+
+      100% {
+        transform: scale(1);
+      }
     }
 
-    .nav-link:active {
-      transform: none;
+    @keyframes refuse {
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      20% {
+        transform: translateX(-5px);
+      }
+
+      50% {
+        transform: translateX(5px);
+      }
+
+      80% {
+        transform: translateX(-2px);
+      }
+    }
+
+    [data-bump='up']::before {
+      animation: count-bump-up 260ms ease-in-out;
+    }
+
+    [data-bump='down']::before {
+      animation: count-bump-down 260ms ease-in-out;
+    }
+
+    [data-full] {
+      animation: refuse 240ms ease-in-out;
     }
   }
 </style>

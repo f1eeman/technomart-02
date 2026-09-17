@@ -1,0 +1,271 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import PageHead from '@/components/page-head.astro'
+import { COLORS, PRODUCTS, priceLabel, titleOf } from '@/data/catalog'
+import { HOME } from '@/data/nav'
+
+const title = 'Сравнение — DEVICE'
+const description =
+  'Отобранные товары рядом: цена, тип, наличие Bluetooth, цвет и характеристики в одной таблице.'
+
+const colorTitle = (slug: string): string =>
+  COLORS.find((color) => color.slug === slug)?.title ?? slug
+---
+
+<Layout {title} {description} inner>
+  <PageHead heading="Сравнение" crumbs={[HOME, { title: 'Сравнение' }]} />
+  <div class="compare-page">
+    <p class="compare-empty" data-compare-empty>
+      Сравнивать пока нечего. Наведите курсор на товар в <a href="/catalog"
+        >каталоге</a
+      > и нажмите «Добавить к сравнению» — рядом встанут до четырёх позиций.
+    </p>
+    <table class="compare-table" data-compare-table hidden>
+      <caption class="visually-hidden">Сравнение отобранных товаров</caption>
+      <thead>
+        <tr>
+          <td class="compare-corner"></td>
+          {
+            PRODUCTS.map((product) => (
+              <th
+                class="compare-head"
+                scope="col"
+                data-compare-cell={product.slug}
+                hidden
+              >
+                <img
+                  class="compare-thumb"
+                  src={product.image.src}
+                  width="140"
+                  height="148"
+                  alt=""
+                />
+                <a class="compare-name" href={`/product/${product.slug}`}>
+                  {titleOf(product)}
+                </a>
+                <button
+                  class="compare-remove"
+                  type="button"
+                  data-compare-remove={product.slug}
+                >
+                  <span class="visually-hidden">
+                    Убрать из сравнения: {titleOf(product)}
+                  </span>
+                </button>
+              </th>
+            ))
+          }
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th class="compare-label" scope="row">Цена</th>
+          {
+            PRODUCTS.map((product) => (
+              <td
+                class="compare-value compare-price"
+                data-compare-cell={product.slug}
+                hidden
+              >
+                {priceLabel(product.price)}
+              </td>
+            ))
+          }
+        </tr>
+        <tr>
+          <th class="compare-label" scope="row">Тип</th>
+          {
+            PRODUCTS.map((product) => (
+              <td class="compare-value" data-compare-cell={product.slug} hidden>
+                {product.kind}
+              </td>
+            ))
+          }
+        </tr>
+        <tr>
+          <th class="compare-label" scope="row">Bluetooth</th>
+          {
+            PRODUCTS.map((product) => (
+              <td class="compare-value" data-compare-cell={product.slug} hidden>
+                {product.bluetooth ? 'Есть' : 'Нет'}
+              </td>
+            ))
+          }
+        </tr>
+        <tr>
+          <th class="compare-label" scope="row">Цвет</th>
+          {
+            PRODUCTS.map((product) => (
+              <td class="compare-value" data-compare-cell={product.slug} hidden>
+                {colorTitle(product.color)}
+              </td>
+            ))
+          }
+        </tr>
+        <tr>
+          <th class="compare-label" scope="row">Характеристики</th>
+          {
+            PRODUCTS.map((product) => (
+              <td class="compare-value" data-compare-cell={product.slug} hidden>
+                <ul class="compare-specs">
+                  {product.specs.map((spec) => (
+                    <li>
+                      <span class="compare-spec-label">{spec.label}</span>
+                      {spec.value}
+                    </li>
+                  ))}
+                </ul>
+              </td>
+            ))
+          }
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</Layout>
+
+<style>
+  .compare-page {
+    width: var(--layout-width);
+    margin: 0 auto;
+    margin-bottom: 90px;
+    padding-right: 20px;
+    padding-left: 80px;
+  }
+
+  .compare-empty {
+    width: 560px;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-open-sans);
+    font-size: 15px;
+    font-weight: normal;
+    line-height: 30px;
+  }
+
+  .compare-empty a {
+    color: var(--color-text);
+    text-decoration: underline;
+  }
+
+  .compare-empty a:hover,
+  .compare-empty a:focus {
+    text-decoration: none;
+  }
+
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+
+  .compare-corner {
+    width: 200px;
+  }
+
+  .compare-head {
+    position: relative;
+    padding: 20px;
+    padding-top: 0;
+    vertical-align: top;
+    text-align: left;
+  }
+
+  .compare-thumb {
+    display: block;
+    margin-bottom: 15px;
+  }
+
+  .compare-name {
+    font-size: 18px;
+    font-weight: normal;
+    line-height: 24px;
+    color: var(--color-text);
+  }
+
+  .compare-name:hover,
+  .compare-name:focus {
+    color: rgb(0 0 0 / 60%);
+  }
+
+  .compare-remove {
+    position: absolute;
+    top: 0;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+  }
+
+  .compare-remove::before,
+  .compare-remove::after {
+    content: '';
+    position: absolute;
+    top: 14px;
+    left: 5px;
+    width: 20px;
+    height: 2px;
+    background-color: rgb(0 0 0 / 30%);
+  }
+
+  .compare-remove::before {
+    transform: rotate(45deg);
+  }
+
+  .compare-remove::after {
+    transform: rotate(-45deg);
+  }
+
+  .compare-remove:hover::before,
+  .compare-remove:hover::after,
+  .compare-remove:focus::before,
+  .compare-remove:focus::after {
+    background-color: var(--color-text);
+  }
+
+  .compare-label {
+    padding: 18px 20px 18px 0;
+    border-top: 2px solid #e5e5e5;
+    font-size: 16px;
+    font-weight: normal;
+    line-height: 24px;
+    letter-spacing: 0.2em;
+    text-align: left;
+    text-transform: uppercase;
+    vertical-align: top;
+  }
+
+  .compare-value {
+    padding: 18px 20px;
+    border-top: 2px solid #e5e5e5;
+    font-family: var(--font-open-sans);
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 20px;
+    vertical-align: top;
+  }
+
+  .compare-price {
+    font-family: var(--font-gilroy-light);
+    font-size: 18px;
+    line-height: 24px;
+    color: var(--color-surface-dark);
+  }
+
+  .compare-specs {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .compare-specs li {
+    margin-bottom: 8px;
+  }
+
+  .compare-spec-label {
+    display: block;
+    color: rgb(0 0 0 / 50%);
+  }
+</style>

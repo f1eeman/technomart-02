@@ -1,0 +1,288 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import PageHead from '@/components/page-head.astro'
+import Button from '@/components/button.astro'
+import { PRODUCTS, priceLabel, titleOf } from '@/data/catalog'
+import { HOME } from '@/data/nav'
+
+const title = 'Корзина — DEVICE'
+const description =
+  'Товары, отложенные к покупке: количество, стоимость и оформление заказа.'
+---
+
+<Layout {title} {description} inner>
+  <PageHead heading="Корзина" crumbs={[HOME, { title: 'Корзина' }]} />
+  <div class="cart-page">
+    <p class="cart-empty" data-cart-empty>
+      В корзине пусто. <a href="/catalog">Загляните в каталог</a> — там есть чем это
+      исправить.
+    </p>
+    <p class="cart-done" data-cart-done hidden>
+      Заказ принят. Курьер позвонит по телефону из вашего профиля и уточнит
+      этаж.
+    </p>
+    <div class="cart-filled" data-cart-filled hidden>
+      <ul class="cart-list" data-cart-list>
+        {
+          PRODUCTS.map((product) => (
+            <li
+              class="cart-row"
+              data-cart-row={product.slug}
+              data-price={String(product.price)}
+              hidden
+            >
+              <img
+                class="cart-thumb"
+                src={product.image.src}
+                width="100"
+                height="105"
+                alt=""
+              />
+              <span class="cart-name">
+                <a href={`/product/${product.slug}`} data-cart-title>
+                  {titleOf(product)}
+                </a>
+                <span class="cart-unit">
+                  {priceLabel(product.price)} за штуку
+                </span>
+              </span>
+              <span class="cart-amount">
+                <button class="cart-step" type="button" data-cart-step="-1">
+                  −<span class="visually-hidden">Убрать одну штуку</span>
+                </button>
+                <input
+                  class="cart-field"
+                  type="text"
+                  inputmode="numeric"
+                  value="1"
+                  aria-label={`Количество: ${titleOf(product)}`}
+                  data-cart-amount
+                />
+                <button class="cart-step" type="button" data-cart-step="1">
+                  +<span class="visually-hidden">Добавить одну штуку</span>
+                </button>
+              </span>
+              <span class="cart-sum" data-cart-sum>
+                {priceLabel(product.price)}
+              </span>
+              <button class="cart-remove" type="button" data-cart-remove>
+                <span class="visually-hidden">
+                  Удалить из корзины: {titleOf(product)}
+                </span>
+              </button>
+            </li>
+          ))
+        }
+      </ul>
+      <div class="cart-total">
+        <span class="cart-total-label">Итого</span>
+        <span class="cart-total-value" data-cart-total>0 руб.</span>
+        <Button class="cart-checkout" type="button" data-cart-checkout>
+          Оформить заказ
+        </Button>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .cart-page {
+    width: var(--layout-width);
+    margin: 0 auto;
+    margin-bottom: 90px;
+    padding-right: 20px;
+    padding-left: 80px;
+  }
+
+  .cart-empty,
+  .cart-done {
+    width: 560px;
+    margin: 0;
+    margin-bottom: 40px;
+    padding: 0;
+    font-family: var(--font-open-sans);
+    font-size: 15px;
+    font-weight: normal;
+    line-height: 30px;
+  }
+
+  .cart-empty a {
+    color: var(--color-text);
+    text-decoration: underline;
+  }
+
+  .cart-empty a:hover,
+  .cart-empty a:focus {
+    text-decoration: none;
+  }
+
+  .cart-list {
+    margin: 0;
+    margin-bottom: 40px;
+    padding: 0;
+    list-style: none;
+  }
+
+  .cart-row {
+    display: flex;
+    align-items: center;
+    column-gap: 30px;
+    padding-block: 20px;
+    border-bottom: 2px solid #e5e5e5;
+  }
+
+  .cart-thumb {
+    flex-shrink: 0;
+    width: 100px;
+    height: 105px;
+    object-fit: cover;
+  }
+
+  .cart-name {
+    display: block;
+    width: 420px;
+  }
+
+  .cart-name a {
+    font-size: 18px;
+    line-height: 24px;
+    color: var(--color-text);
+  }
+
+  .cart-name a:hover,
+  .cart-name a:focus {
+    color: rgb(0 0 0 / 60%);
+  }
+
+  .cart-unit {
+    display: block;
+    margin-top: 6px;
+    font-family: var(--font-open-sans);
+    font-size: 13px;
+    font-weight: normal;
+    line-height: 20px;
+    color: rgb(0 0 0 / 50%);
+  }
+
+  .cart-amount {
+    display: flex;
+    align-items: center;
+    column-gap: 6px;
+  }
+
+  .cart-step {
+    width: 30px;
+    height: 30px;
+    border: 2px solid var(--color-text);
+    font-size: 18px;
+    line-height: 24px;
+    color: var(--color-text);
+    background-color: transparent;
+    cursor: pointer;
+  }
+
+  .cart-step:hover,
+  .cart-step:focus {
+    color: var(--color-text-inverse);
+    background-color: var(--color-text);
+    outline: none;
+  }
+
+  .cart-step:active {
+    color: rgb(255 255 255 / 30%);
+  }
+
+  .cart-field {
+    width: 46px;
+    height: 30px;
+    border: none;
+    font-family: var(--font-gilroy-extrabold);
+    font-size: 16px;
+    line-height: 24px;
+    text-align: center;
+    color: var(--color-text);
+    background-color: var(--color-field-bg);
+  }
+
+  .cart-field:hover {
+    background-color: var(--color-field-bg-hover);
+  }
+
+  .cart-field:focus {
+    outline: 3px solid var(--color-accent);
+    outline-offset: -3px;
+  }
+
+  .cart-sum {
+    width: 130px;
+    margin-left: auto;
+    font-family: var(--font-gilroy-light);
+    font-size: 18px;
+    line-height: 24px;
+    text-align: right;
+    color: var(--color-surface-dark);
+  }
+
+  .cart-remove {
+    position: relative;
+    width: 30px;
+    height: 30px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+  }
+
+  .cart-remove::before,
+  .cart-remove::after {
+    content: '';
+    position: absolute;
+    top: 14px;
+    left: 5px;
+    width: 20px;
+    height: 2px;
+    background-color: rgb(0 0 0 / 30%);
+  }
+
+  .cart-remove::before {
+    transform: rotate(45deg);
+  }
+
+  .cart-remove::after {
+    transform: rotate(-45deg);
+  }
+
+  .cart-remove:hover::before,
+  .cart-remove:hover::after,
+  .cart-remove:focus::before,
+  .cart-remove:focus::after {
+    background-color: var(--color-text);
+  }
+
+  .cart-total {
+    display: flex;
+    align-items: center;
+    column-gap: 30px;
+    min-height: 70px;
+    padding-inline: 30px;
+    background-color: #ebebeb;
+  }
+
+  .cart-total-label {
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .cart-total-value {
+    margin-right: auto;
+    font-family: var(--font-gilroy-light);
+    font-size: 24px;
+    line-height: 36px;
+  }
+
+  .cart-checkout {
+    width: 260px;
+    text-align: center;
+  }
+</style>

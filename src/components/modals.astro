@@ -1,0 +1,500 @@
+---
+import Button from '@/components/button.astro'
+import mapBig from '@/assets/images/map-big.jpg'
+
+interface Props {
+  contacts?: boolean
+}
+
+const { contacts = false } = Astro.props
+
+const MAP_EMBED =
+  'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2674.6601710811333!2d37.52778005465337!3d55.6870379175277!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46b54cf65f5c8955%3A0x694710ccd55501e!2z0YPQuy4g0KHRgtGA0L7QuNGC0LXQu9C10LksIDE1LCDQnNC-0YHQutCy0LAsINCg0L7RgdGB0LjRjywgMTE5MzEx!5e0!3m2!1sru!2skz!4v1572548552860!5m2!1sru!2skz'
+---
+
+<section class="modal modal-login" data-modal="login">
+  <h2 class="visually-hidden">Личный кабинет</h2>
+  <form class="login-form">
+    <p>
+      <label for="user-login">Логин:</label>
+      <input
+        class="login-user"
+        type="text"
+        id="user-login"
+        name="login"
+        autocomplete="username"
+        data-field="login"
+        data-modal-focus
+      />
+    </p>
+    <p>
+      <label for="user-password">Пароль:</label>
+      <input
+        class="login-password"
+        type="password"
+        id="user-password"
+        name="password"
+        autocomplete="current-password"
+        data-field="password"
+      />
+    </p>
+    <p class="login-password-info">
+      <label class="login-checkbox">
+        <input class="visually-hidden" type="checkbox" name="remember" />
+        <span class="checkbox-indicator"></span>
+        Запомните меня
+      </label>
+      <a class="restore" href="/restore">Я забыл пароль</a>
+    </p>
+    <Button class="submit log-in" type="submit">Войти</Button>
+  </form>
+  <button class="modal-close" type="button" data-modal-close>
+    <span class="visually-hidden">Закрыть</span>
+  </button>
+</section>
+
+{
+  contacts && (
+    <section
+      class="modal modal-write-us"
+      id="write-us"
+      data-modal="write-us"
+      aria-labelledby="write-us-title"
+    >
+      <h2 class="visually-hidden" id="write-us-title">
+        Напишите нам
+      </h2>
+      <form class="write-us-form">
+        <div class="modal-write-us-box">
+          <p class="write-us-item">
+            <label for="user-name">Ваше имя:</label>
+            <input
+              class="name"
+              type="text"
+              name="user-name"
+              id="user-name"
+              autocomplete="name"
+              placeholder="Имя Фамилия"
+              data-field="name"
+              data-modal-focus
+            />
+          </p>
+          <p class="write-us-item">
+            <label for="user-email">Ваш e-mail</label>
+            <input
+              class="email"
+              type="email"
+              name="user-email"
+              id="user-email"
+              autocomplete="email"
+              placeholder="email@example.com"
+              data-field="email"
+            />
+          </p>
+        </div>
+        <p class="write-us-item write-us-item-textarea">
+          <label for="user-text">Текст письма:</label>
+          <textarea
+            class="text"
+            name="user-text"
+            id="user-text"
+            placeholder="В свободной форме"
+            data-field="text"
+          />
+        </p>
+        <Button class="submit" type="submit">
+          Отправить
+        </Button>
+      </form>
+      <p class="write-us-done" data-write-done hidden>
+        Письмо ушло. Ответим на указанный e-mail в течение дня.
+      </p>
+      <button class="modal-close" type="button" data-modal-close>
+        <span class="visually-hidden">Закрыть</span>
+      </button>
+    </section>
+  )
+}
+
+{
+  contacts && (
+    <section
+      class="modal modal-map"
+      data-modal="map"
+      data-modal-animation="sideways"
+    >
+      <h2 class="visually-hidden">Как до нас добраться</h2>
+      <iframe
+        src={MAP_EMBED}
+        width="960"
+        height="559"
+        loading="lazy"
+        title="Карта проезда: г. Москва, ул. Строителей, 15"
+      />
+      <p class="modal-map-box">
+        <img
+          src={mapBig.src}
+          width="960"
+          height="559"
+          alt="г. Москва, ул. Строителей, 15"
+        />
+      </p>
+      <button
+        class="modal-close modal-map-close"
+        type="button"
+        data-modal-close
+      >
+        <span class="visually-hidden">Закрыть</span>
+      </button>
+    </section>
+  )
+}
+
+<div class="modal-overlay" data-modal-overlay></div>
+
+<style>
+  @keyframes bounce {
+    0% {
+      transform: translateY(-2000px);
+    }
+
+    70% {
+      transform: translateY(30px);
+    }
+
+    90% {
+      transform: translateY(-10px);
+    }
+
+    100% {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes bounce-horizont {
+    0% {
+      transform: translateX(2000px);
+    }
+
+    70% {
+      transform: translateX(-30px);
+    }
+
+    90% {
+      transform: translateX(10px);
+    }
+
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes opacity {
+    0% {
+      opacity: 0;
+    }
+
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes shake {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+      transform: translateX(-10px);
+    }
+
+    20%,
+    40%,
+    60%,
+    80% {
+      transform: translateX(10px);
+    }
+  }
+
+  .modal {
+    position: fixed;
+    z-index: 10000;
+    background-color: var(--color-bg);
+    box-shadow: 0 30px 50px rgb(0 0 0 / 70%);
+  }
+
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    display: none;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(0 0 0 / 50%);
+  }
+
+  .modal-login {
+    top: 100px;
+    left: 50%;
+    display: none;
+    width: 550px;
+    margin-left: -275px;
+    padding: 50px 80px;
+  }
+
+  .modal-write-us {
+    top: 50px;
+    left: 50%;
+    display: none;
+    width: 960px;
+    margin-left: -480px;
+    padding: 95px 100px 70px;
+  }
+
+  .modal-map {
+    top: 50%;
+    left: 50%;
+    display: none;
+    width: 960px;
+    height: 559px;
+    margin-top: -280px;
+    margin-left: -480px;
+  }
+
+  .modal-map iframe {
+    position: relative;
+    z-index: 2;
+    border: 0;
+  }
+
+  .modal-map-close {
+    z-index: 3;
+  }
+
+  .modal-map-box {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    width: 960px;
+    height: 559px;
+    margin: 0;
+    padding: 0;
+  }
+
+  .modal-show {
+    display: block;
+    animation: bounce 0.6s;
+  }
+
+  .modal-show-map {
+    display: block;
+    animation: bounce-horizont 0.6s;
+  }
+
+  .overlay-show {
+    display: block;
+    animation: opacity 0.5s;
+  }
+
+  .modal-error {
+    animation: shake 0.6s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .modal-show,
+    .modal-show-map,
+    .overlay-show,
+    .modal-error {
+      animation: none;
+    }
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 22px;
+    right: 22px;
+    width: 55px;
+    height: 55px;
+    border: none;
+    border-radius: 50%;
+    background-color: rgb(247 226 150 / 50%);
+    cursor: pointer;
+  }
+
+  .modal-close:hover,
+  .modal-close:focus {
+    background-color: rgb(247 226 150);
+    outline: none;
+  }
+
+  .modal-close:active {
+    background-color: rgb(247 226 150 / 30%);
+  }
+
+  .modal-close::before,
+  .modal-close::after {
+    content: '';
+    position: absolute;
+    top: 26px;
+    left: 15px;
+    width: 25px;
+    height: 2px;
+    background-color: var(--color-text-inverse);
+  }
+
+  .modal-close::before {
+    transform: rotate(45deg);
+  }
+
+  .modal-close::after {
+    transform: rotate(-45deg);
+  }
+
+  .login-form p:not(:last-of-type) label {
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .login-user,
+  .login-password {
+    width: 100%;
+    padding: 12px 19px;
+    border: none;
+    font-family: var(--font-open-sans);
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 18px;
+    color: var(--color-text);
+    background-color: var(--color-field-bg);
+  }
+
+  .login-password-info {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 35px;
+  }
+
+  .login-checkbox {
+    position: relative;
+    padding-left: 35px;
+    cursor: pointer;
+  }
+
+  .login-checkbox input[type='checkbox'] + .checkbox-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--color-text);
+    border-radius: 50%;
+    transition-duration: 0.1s;
+  }
+
+  .login-checkbox input[type='checkbox']:focus + .checkbox-indicator {
+    border-color: var(--color-accent);
+    outline: none;
+  }
+
+  .login-checkbox input[type='checkbox']:checked + .checkbox-indicator {
+    border: 6px solid var(--color-accent);
+    background-color: var(--color-text);
+  }
+
+  .login-checkbox:hover,
+  .login-checkbox:focus {
+    color: rgb(0 0 0 / 60%);
+  }
+
+  .restore {
+    color: var(--color-text);
+    text-decoration: underline;
+  }
+
+  .restore:hover,
+  .restore:focus {
+    text-decoration: none;
+  }
+
+  .submit {
+    width: 200px;
+    text-align: center;
+  }
+
+  .log-in {
+    width: 150px;
+  }
+
+  .modal-write-us-box {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-bottom: 35px;
+  }
+
+  .modal-write-us-box .write-us-item {
+    width: 360px;
+  }
+
+  .write-us-form input[type='text'],
+  .write-us-form input[type='email'],
+  .write-us-form textarea {
+    width: 100%;
+    padding: 16px 19px 19px;
+    border: none;
+    font-family: var(--font-open-sans);
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 18px;
+    color: var(--color-text);
+    background-color: var(--color-field-bg);
+  }
+
+  .write-us-form input[type='text']:hover,
+  .write-us-form input[type='email']:hover,
+  .write-us-form textarea:hover {
+    background-color: var(--color-field-bg-hover);
+    outline: none;
+  }
+
+  .write-us-form input[type='text']:focus,
+  .write-us-form input[type='email']:focus,
+  .write-us-form textarea:focus {
+    border: 3px solid var(--color-accent);
+    background-color: var(--color-bg);
+  }
+
+  .text {
+    min-height: 155px;
+  }
+
+  .write-us-item {
+    margin: 0;
+    padding: 0;
+  }
+
+  .write-us-item-textarea {
+    margin-bottom: 45px;
+  }
+
+  .write-us-form label {
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .write-us-done {
+    margin: 0;
+    padding: 0;
+    font-size: 24px;
+    line-height: 36px;
+  }
+</style>

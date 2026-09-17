@@ -1,0 +1,69 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import PageHead from '@/components/page-head.astro'
+import { HOME } from '@/data/nav'
+
+const title = 'Выход — DEVICE'
+const description = 'Выход из личного кабинета интернет-магазина DEVICE.'
+---
+
+<Layout {title} {description} inner>
+  <PageHead heading="Выход" crumbs={[HOME, { title: 'Выход' }]} />
+  <div class="logout-page">
+    <p class="logout-text">
+      Вы вышли из кабинета. Корзина и список сравнения остались на месте — они
+      не привязаны к входу.
+    </p>
+    <p class="logout-links">
+      <a href="/">На главную</a> · <a href="/catalog">В каталог</a> ·
+      <a href="/login">Войти снова</a>
+    </p>
+  </div>
+</Layout>
+
+<script>
+  import { signOut } from '@/scripts/session'
+
+  signOut()
+</script>
+
+<style>
+  .logout-page {
+    width: var(--layout-width);
+    margin: 0 auto;
+    margin-bottom: 90px;
+    padding-right: 20px;
+    padding-left: 80px;
+  }
+
+  .logout-text {
+    width: 560px;
+    margin: 0;
+    margin-bottom: 25px;
+    padding: 0;
+    font-family: var(--font-open-sans);
+    font-size: 15px;
+    font-weight: normal;
+    line-height: 30px;
+  }
+
+  .logout-links {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-open-sans);
+    font-size: 15px;
+    font-weight: normal;
+    line-height: 30px;
+    color: rgb(0 0 0 / 30%);
+  }
+
+  .logout-links a {
+    color: var(--color-text);
+    text-decoration: underline;
+  }
+
+  .logout-links a:hover,
+  .logout-links a:focus {
+    text-decoration: none;
+  }
+</style>

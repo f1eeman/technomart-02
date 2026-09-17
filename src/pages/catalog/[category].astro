@@ -1,0 +1,113 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import PageHead from '@/components/page-head.astro'
+import CatalogFilter from '@/components/catalog-filter.astro'
+import CatalogSort from '@/components/catalog-sort.astro'
+import Pagination from '@/components/pagination.astro'
+import ProductCard from '@/components/product-card.astro'
+import {
+  CATEGORIES,
+  PAGE_SIZE,
+  productsOf,
+  type Category,
+} from '@/data/catalog'
+import { CATALOG, HOME } from '@/data/nav'
+
+export function getStaticPaths() {
+  return CATEGORIES.map((category) => ({
+    params: { category: category.slug },
+    props: { category },
+  }))
+}
+
+interface Props {
+  category: Category
+}
+
+const { category } = Astro.props
+const products = productsOf(category.slug)
+const pages = Math.ceil(products.length / PAGE_SIZE)
+
+const title = `${category.title} — DEVICE`
+const description = `${category.title} в интернет-магазине DEVICE: ${String(products.length)} позиций, фильтр по цене, цвету и Bluetooth.`
+---
+
+<Layout {title} {description} inner category={category.slug}>
+  <PageHead
+    heading={category.title}
+    crumbs={[HOME, CATALOG, { title: category.title }]}
+  />
+  <div class="catalog-columns">
+    <CatalogFilter {products} />
+    <div class="sort-catalog-wrapper">
+      <CatalogSort />
+      <section class="products-catalog">
+        <h2 class="visually-hidden">Список: {category.title}</h2>
+        <ul class="products-catalog-list" data-catalog>
+          {products.map((product) => <ProductCard {product} />)}
+        </ul>
+        <div class="catalog-ghosts" data-catalog-ghosts aria-hidden="true">
+        </div>
+        <p class="catalog-empty" data-catalog-empty hidden>
+          Под такой фильтр ничего не подошло. Попробуйте ослабить условия.
+        </p>
+        <Pagination {pages} />
+      </section>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  import { initCatalog } from '@/scripts/catalog'
+
+  initCatalog()
+</script>
+
+<style>
+  .catalog-columns {
+    position: relative;
+    display: flex;
+    flex-wrap: nowrap;
+    width: var(--layout-width);
+    margin: 0 auto;
+    padding-right: 20px;
+    padding-left: 80px;
+  }
+
+  .sort-catalog-wrapper {
+    width: 830px;
+    padding-left: 70px;
+    background-color: var(--color-bg);
+  }
+
+  .products-catalog {
+    position: relative;
+  }
+
+  .catalog-ghosts {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  .products-catalog-list {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 40px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .catalog-empty {
+    margin: 0;
+    margin-bottom: 40px;
+    padding: 0;
+    font-family: var(--font-open-sans);
+    font-size: 15px;
+    font-weight: normal;
+    line-height: 30px;
+    color: var(--color-surface-dark);
+  }
+</style>

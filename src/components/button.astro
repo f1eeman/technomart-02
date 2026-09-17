@@ -1,131 +1,79 @@
 ---
 import type { HTMLTag, Polymorphic } from 'astro/types'
 
-type Props<Tag extends HTMLTag = 'button'> = Polymorphic<{ as: Tag }> & {
-  variant?: 'accent' | 'glass'
-  size?: 'md' | 'lg'
-}
+type Props<Tag extends HTMLTag = 'button'> = Polymorphic<{ as: Tag }>
 
-const {
-  as: Tag = 'button',
-  class: className,
-  variant = 'accent',
-  size = 'md',
-  ...attrs
-} = Astro.props
+const { as: Tag = 'button', class: className, ...attrs } = Astro.props
 ---
 
-<Tag
-  class:list={['base-button', `variant-${variant}`, `size-${size}`, className]}
-  {...attrs}
->
-  <slot />
+<Tag class:list={['button', className]} {...attrs}>
+  <span class="button-content"><slot /></span>
 </Tag>
 
 <style>
-  .base-button {
+  .button {
     position: relative;
-    display: inline-flex;
-    gap: 10px;
-    align-items: center;
-    justify-content: center;
-    min-block-size: var(--control-height);
-    padding: 12px 32px;
-    border-radius: var(--radius-control);
-    font: inherit;
-    font-weight: 600;
-    line-height: 24px;
-    text-align: center;
+    display: inline-block;
+    padding-block: 8px;
+    border: none;
+    font-family: inherit;
+    font-size: 18px;
+    font-weight: normal;
+    line-height: 20px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    vertical-align: baseline;
+    color: var(--color-text);
+    background-color: transparent;
     cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
-    user-select: none;
-    transition:
-      background-color 180ms ease,
-      transform 180ms cubic-bezier(0.2, 0.8, 0.25, 1),
-      box-shadow 180ms ease;
   }
 
-  .variant-accent {
+  .button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    z-index: 10;
+    width: 100%;
+    height: 8px;
+    margin-top: -4px;
     background-color: var(--color-accent);
-    color: var(--color-text-on-accent);
-    box-shadow: var(--shadow-accent);
+    transition-duration: 200ms;
   }
 
-  .variant-glass {
-    padding: 11px 31px;
-    border: 1px solid var(--color-border-glass);
-    background-color: var(--color-surface-glass);
-    color: var(--color-text-inverse);
+  .button:hover::before,
+  .button:focus::before {
+    top: 0;
+    height: 100%;
+    margin-top: 0;
   }
 
-  .size-lg {
-    padding-block: 16px;
+  .button:active {
+    color: rgb(0 0 0 / 30%);
   }
 
-  .variant-glass.size-lg {
-    padding: 15px;
+  .button-content {
+    position: relative;
+    z-index: 100;
   }
 
-  @media (hover: hover) and (pointer: fine) {
-    .base-button:hover {
-      transform: translateY(-2px);
-    }
-
-    .variant-accent:hover {
-      background-color: color-mix(in srgb, var(--color-accent) 88%, #fff);
-    }
-
-    .variant-glass:hover {
-      background-color: color-mix(
-        in srgb,
-        var(--color-text-inverse) 12%,
-        transparent
-      );
-    }
-  }
-
-  .base-button:focus-visible {
-    transform: translateY(-2px);
-    outline: 2px solid var(--color-accent);
-    outline-offset: 3px;
-  }
-
-  .variant-glass:focus-visible {
-    outline-color: var(--color-text-inverse);
-  }
-
-  .base-button:active {
-    transform: translateY(0) scale(0.97);
-    transition-duration: 90ms;
-  }
-
-  .variant-accent:active {
-    background-color: color-mix(in srgb, var(--color-accent) 85%, #000);
-  }
-
-  .variant-glass:active {
-    background-color: color-mix(
-      in srgb,
-      var(--color-text-inverse) 6%,
-      transparent
-    );
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .base-button {
-      transition: background-color 180ms ease;
-    }
-
-    .base-button:focus-visible,
-    .base-button:active {
-      transform: none;
-    }
-
-    @media (hover: hover) and (pointer: fine) {
-      .base-button:hover {
-        transform: none;
+  @media (prefers-reduced-motion: no-preference) {
+    @keyframes bar-run {
+      0% {
+        clip-path: inset(0 100% 0 0);
       }
+
+      50% {
+        clip-path: inset(0 0 0 0);
+      }
+
+      100% {
+        clip-path: inset(0 0 0 100%);
+      }
+    }
+
+    .button[data-ran]::before {
+      animation: bar-run 440ms cubic-bezier(0.4, 0, 0.2, 1);
     }
   }
 </style>

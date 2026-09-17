@@ -3,15 +3,25 @@ import { Font } from 'astro:assets'
 import Seo from '@/components/seo.astro'
 import Header from '@/components/header.astro'
 import Footer from '@/components/footer.astro'
+import Modals from '@/components/modals.astro'
 
 import '@/styles/index.css'
 
 interface Props {
   title: string
   description: string
+  inner?: boolean
+  category?: string | undefined
+  contacts?: boolean
 }
 
-const { title, description } = Astro.props
+const {
+  title,
+  description,
+  inner = false,
+  category,
+  contacts = false,
+} = Astro.props
 ---
 
 <!doctype html>
@@ -22,25 +32,34 @@ const { title, description } = Astro.props
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <Seo {title} {description} />
-    <Font
-      cssVariable="--font-open-sans"
-      preload={[{ weight: 400 }, { weight: 600 }, { weight: 700 }]}
-    />
+    <Font cssVariable="--font-gilroy-extrabold" preload={[{ weight: 400 }]} />
+    <Font cssVariable="--font-gilroy-light" preload={[{ weight: 400 }]} />
+    <Font cssVariable="--font-open-sans" preload={[{ weight: 400 }]} />
   </head>
-  <body>
-    <Header />
+  <body data-session="guest">
+    <Header {inner} {category} />
     <main>
       <slot />
     </main>
-    <Footer />
+    <Footer {inner} />
+    <Modals {contacts} />
     <script>
-      import { initReveal } from '@/scripts/reveal'
-      import { initParallax } from '@/scripts/parallax'
-      import { initRequestForm } from '@/scripts/request-form'
+      import { initCartControls, initCartPage } from '@/scripts/cart'
+      import { initCompareControls, initComparePage } from '@/scripts/compare'
+      import { initLoginForm, initWriteForm } from '@/scripts/forms'
+      import { initModals } from '@/scripts/modal'
+      import { initNotches } from '@/scripts/notches'
+      import { initSession } from '@/scripts/session'
 
-      initReveal()
-      initParallax()
-      initRequestForm()
+      initSession()
+      initModals()
+      initNotches()
+      initLoginForm()
+      initWriteForm()
+      initCartControls()
+      initCartPage()
+      initCompareControls()
+      initComparePage()
     </script>
   </body>
 </html>

@@ -1,0 +1,199 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import PageHead from '@/components/page-head.astro'
+import Button from '@/components/button.astro'
+import { BRANDS, categoryBySlug, type Brand } from '@/data/catalog'
+import { CATALOG, HOME } from '@/data/nav'
+
+export function getStaticPaths() {
+  return BRANDS.map((brand) => ({
+    params: { slug: brand.slug },
+    props: { brand },
+  }))
+}
+
+interface Props {
+  brand: Brand
+}
+
+const { brand } = Astro.props
+
+const category = categoryBySlug(brand.category)
+
+if (category === undefined) throw new Error(`Нет раздела ${brand.category}`)
+
+const ABOUT: Record<string, string> = {
+  dji: 'Квадрокоптеры, которые улетают дальше, чем видит их хозяин. Мы уверенно рассказываем про дальность связи, хотя сами дальше складской парковки ничего не запускали.',
+  'sp-gadgets':
+    'Крепления и держатели: то, чем камеру привязывают к шлему, рулю и доске. На складе у нас таких деталей целая коробка, и какая от какого набора — знает только кладовщик.',
+  gopro:
+    'Экшн-камеры снимают то, что вы не успели заметить. Одну мы повесили над кассой и с тех пор пересматриваем, как наш менеджер роняет коробку с моноподами.',
+  vive: 'Шлемы виртуальной реальности: надеваете — и вы в другом месте. Демонстрационный образец мы так и не распаковали: распакуешь — придётся объяснять, чем он лучше соседнего.',
+}
+
+const others = BRANDS.filter((item) => item.slug !== brand.slug)
+
+const title = `${brand.name} — DEVICE`
+const description = `Что DEVICE знает о производителе ${brand.name} и в каком разделе каталога лежат такие товары.`
+---
+
+<Layout {title} {description} inner>
+  <PageHead
+    heading={brand.name}
+    crumbs={[HOME, CATALOG, { title: brand.name }]}
+  />
+  <div class="brand-page">
+    <div class="brand-layout">
+      <div class="brand-mark">
+        <img src={brand.image.src} width="260" height="100" alt={brand.name} />
+        <p class="brand-mark-note">
+          На главной этот логотип серый и становится цветным под курсором. Здесь
+          он цветной сразу — считайте, что вы уже навели.
+        </p>
+      </div>
+      <div class="brand-info">
+        <p class="brand-lead">
+          Про самого производителя мы знаем ровно столько, сколько помещается в
+          логотип 260×100. Зато точно знаем, в каком разделе каталога лежат
+          такие товары, — туда и ведёт кнопка ниже.
+        </p>
+        <h2 class="brand-title">О производителе</h2>
+        <p class="brand-text">{ABOUT[brand.slug]}</p>
+        <p class="brand-text">
+          Такие штуки лежат у нас в разделе «{category.title}». Фильтра по
+          производителю нет: коробки на складе мы раскладываем по размеру, а не
+          по надписи.
+        </p>
+        <Button as="a" class="brand-button" href={`/catalog/${category.slug}`}>
+          В раздел «{category.title}»
+        </Button>
+      </div>
+    </div>
+    <p class="brand-footnote">
+      Всё написанное — про наш магазин, а не про саму компанию: про неё мы знаем
+      ровно столько, сколько помещается в логотип 260×100.
+    </p>
+    <p class="brand-others">
+      Другие производители: {
+        others.map((item, at) => (
+          <>
+            {at > 0 && ' · '}
+            <a href={`/brand/${item.slug}`}>{item.name}</a>
+          </>
+        ))
+      } · <a href="/catalog">Все разделы каталога</a>
+    </p>
+  </div>
+</Layout>
+
+<style>
+  .brand-page {
+    width: var(--layout-width);
+    margin: 0 auto;
+    margin-bottom: 90px;
+    padding-right: 20px;
+    padding-left: 80px;
+  }
+
+  .brand-layout {
+    display: flex;
+    column-gap: 70px;
+  }
+
+  .brand-mark {
+    flex-shrink: 0;
+    width: 360px;
+  }
+
+  .brand-mark-note {
+    margin: 0;
+    margin-top: 25px;
+    padding: 0;
+    font-family: var(--font-open-sans);
+    font-size: 13px;
+    font-weight: normal;
+    line-height: 20px;
+    color: rgb(0 0 0 / 50%);
+  }
+
+  .brand-info {
+    position: relative;
+    width: 670px;
+    padding-top: 30px;
+  }
+
+  .brand-info::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 80px;
+    height: 7px;
+    background-color: var(--color-text);
+  }
+
+  .brand-lead {
+    margin: 0;
+    margin-bottom: 40px;
+    padding: 0;
+    font-size: 24px;
+    line-height: 36px;
+  }
+
+  .brand-title {
+    margin: 0;
+    margin-bottom: 25px;
+    padding: 0;
+    font-size: 30px;
+    font-weight: normal;
+    line-height: 36px;
+  }
+
+  .brand-text {
+    margin: 0;
+    margin-bottom: 30px;
+    padding: 0;
+    font-family: var(--font-open-sans);
+    font-size: 15px;
+    font-weight: normal;
+    line-height: 30px;
+  }
+
+  .brand-button {
+    padding-right: 23px;
+    padding-left: 23px;
+  }
+
+  .brand-footnote {
+    width: 760px;
+    margin: 0;
+    margin-top: 55px;
+    padding: 0;
+    font-family: var(--font-open-sans);
+    font-size: 13px;
+    font-weight: normal;
+    line-height: 20px;
+    color: rgb(0 0 0 / 50%);
+  }
+
+  .brand-others {
+    margin: 0;
+    margin-top: 25px;
+    padding: 0;
+    font-family: var(--font-open-sans);
+    font-size: 15px;
+    font-weight: normal;
+    line-height: 30px;
+    color: rgb(0 0 0 / 30%);
+  }
+
+  .brand-others a {
+    color: var(--color-text);
+    text-decoration: underline;
+  }
+
+  .brand-others a:hover,
+  .brand-others a:focus {
+    text-decoration: none;
+  }
+</style>
