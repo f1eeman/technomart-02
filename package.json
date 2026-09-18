@@ -17,12 +17,14 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "astro check",
+    "api:types": "node scripts/api-types.mjs",
     "test:browser": "playwright test",
     "prepare": "husky"
   },
   "dependencies": {
+    "@astrojs/node": "~11.1.6",
     "@astrojs/sitemap": "^3.7.3",
-    "astro": "~7.1.6"
+    "astro": "~7.2.1"
   },
   "devDependencies": {
     "@astrojs/check": "~0.9.10",
@@ -39,6 +41,7 @@
     "globals": "~17.9.0",
     "husky": "~9.1.7",
     "lint-staged": "~17.3.0",
+    "openapi-typescript": "~7.13.0",
     "postcss-html": "~2.0.0",
     "prettier": "~3.9.6",
     "prettier-plugin-astro": "~0.14.1",

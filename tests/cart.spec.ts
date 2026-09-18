@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { addToCart } from './helpers'
+import { addToCart, checkout, signUp } from './helpers'
 
 test.describe('Корзина', () => {
   test('товар из каталога доезжает до корзины', async ({ page }) => {
@@ -56,26 +56,74 @@ test.describe('Корзина', () => {
   })
 
   test('заказ уходит в историю профиля', async ({ page }) => {
+    await signUp(page, 'Светлана Заказова')
     await page.goto('/catalog/monopods')
     await addToCart(page, 'pocket-selfie-stick')
     await page.goto('/cart')
-    await page.locator('[data-cart-checkout]').click()
+    await checkout(page)
 
     await expect(page.locator('[data-cart-done]')).toBeVisible()
     await expect(page.locator('.user-tools-cart')).not.toContainText('(')
 
-    await page.goto('/login')
+    await page.goto('/profile')
 
-    const form = page.locator('[data-login-page] form')
-
-    await form.locator('[data-field="login"]').fill('Светлана Дурова')
-    await form.locator('[data-field="password"]').fill('secret')
-    await form.locator('button[type="submit"]').click()
-
-    await expect(page).toHaveURL(/\/profile/u)
     await expect(page.locator('[data-orders] .order')).toHaveCount(1)
     await expect(page.locator('[data-orders]')).toContainText(
       'Карманная селфи-палка — 1 шт.',
     )
+  })
+
+  test('телефон набирается по цифре и уходит целиком', async ({ page }) => {
+    await page.goto('/catalog/monopods')
+    await addToCart(page, 'amateur-selfie-stick')
+    await page.goto('/cart')
+    await page.locator('[data-cart-checkout]').click()
+
+    const modal = page.locator('[data-modal="checkout"]')
+    const phone = modal.locator('[data-field="phone"]')
+
+    await modal.locator('[data-field="name"]').fill('Светлана Наборова')
+    await phone.click()
+    await phone.pressSequentially('9261234567')
+    await expect(phone).toHaveValue('+7 926 123 45 67')
+
+    const sent = page.waitForRequest(
+      (request) =>
+        request.url().includes('/api/orders') && request.method() === 'POST',
+    )
+
+    await modal.locator('button[type="submit"]').click()
+
+    const body = (await sent).postDataJSON() as { phone: string }
+
+    expect(body.phone).toBe('+79261234567')
+    await expect(page.locator('[data-cart-done]')).toBeVisible()
+  })
+
+  test('заказ гостя в кабинет не попадает', async ({ page }) => {
+    await page.goto('/catalog/monopods')
+    await addToCart(page, 'kids-selfie-stick')
+    await page.goto('/cart')
+    await checkout(page)
+
+    await expect(page.locator('[data-cart-done]')).toBeVisible()
+
+    await signUp(page, 'Светлана Гостева')
+
+    await expect(page.locator('[data-orders] .order')).toHaveCount(0)
+    await expect(page.locator('[data-orders-empty]')).toBeVisible()
+  })
+
+  test('новый заказ отменяется из кабинета', async ({ page }) => {
+    await signUp(page, 'Светлана Отменова')
+    await page.goto('/catalog/monopods')
+    await addToCart(page, 'bluetooth-selfie-stick')
+    await page.goto('/cart')
+    await checkout(page)
+    await page.goto('/profile')
+
+    await page.locator('[data-order-cancel]').click()
+
+    await expect(page.locator('[data-order-status]')).toHaveText('Отменён')
   })
 })

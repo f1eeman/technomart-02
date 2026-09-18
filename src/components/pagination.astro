@@ -1,29 +1,50 @@
 ---
+import {
+  linkOf,
+  type CatalogBounds,
+  type CatalogState,
+} from '@/scripts/catalog-url'
+
 interface Props {
   pages: number
+  active?: number
+  current?: number
+  empty?: boolean
+  state: CatalogState
+  bounds: CatalogBounds
 }
 
-const { pages } = Astro.props
+const {
+  pages,
+  active = pages,
+  current = 1,
+  empty = false,
+  state,
+  bounds,
+} = Astro.props
+
+const pageLink = (page: number): string => linkOf(state, bounds, { page })
 
 const numbers = Array.from({ length: Math.max(pages, 1) }, (_, at) => at + 1)
 ---
 
-<ul class="pagination-list" data-pagination>
+<ul class="pagination-list" data-pagination hidden={empty}>
   <li class="pagination-item-prev">
-    <a href="?page=1" data-page-step="-1">Назад</a>
+    <a href={pageLink(Math.max(current - 1, 1))} data-page-step="-1">Назад</a>
   </li>
   {
     numbers.map((page) => (
       <li
         class:list={[
           'pagination-item',
-          page === 1 && 'pagination-item-current',
+          page === current && 'pagination-item-current',
         ]}
         data-page-item={String(page)}
+        hidden={page > active}
       >
         <a
-          class:list={[page === 1 && 'link-current']}
-          href={`?page=${String(page)}`}
+          class:list={[page === current && 'link-current']}
+          href={pageLink(page)}
           data-page={String(page)}
         >
           {page}
@@ -32,7 +53,12 @@ const numbers = Array.from({ length: Math.max(pages, 1) }, (_, at) => at + 1)
     ))
   }
   <li class="pagination-item-next">
-    <a href="?page=2" data-page-step="1">Вперед</a>
+    <a
+      href={pageLink(Math.min(current + 1, Math.max(pages, 1)))}
+      data-page-step="1"
+    >
+      Вперед
+    </a>
   </li>
 </ul>
 

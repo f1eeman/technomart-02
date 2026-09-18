@@ -1,9 +1,26 @@
 ---
-const FIELDS = [
+import type { SortDir, SortField } from '@/scripts/api'
+import {
+  linkOf,
+  type CatalogBounds,
+  type CatalogState,
+} from '@/scripts/catalog-url'
+
+interface Props {
+  state: CatalogState
+  bounds: CatalogBounds
+}
+
+const { state, bounds } = Astro.props
+
+const FIELDS: { value: SortField; title: string }[] = [
   { value: 'price', title: 'По цене' },
   { value: 'kind', title: 'По типу' },
   { value: 'popularity', title: 'По популярности' },
 ]
+
+const dirLink = (dir: SortDir): string =>
+  linkOf(state, bounds, { dir, page: 1 })
 ---
 
 <section class="sort" data-sort>
@@ -13,8 +30,8 @@ const FIELDS = [
       FIELDS.map((field) => (
         <li>
           <a
-            class:list={[field.value === 'price' && 'current-sort-type']}
-            href={`?sort=${field.value}`}
+            class:list={[field.value === state.sort && 'current-sort-type']}
+            href={linkOf(state, bounds, { sort: field.value, page: 1 })}
             data-sort-field={field.value}
           >
             {field.title}
@@ -24,15 +41,25 @@ const FIELDS = [
     }
     <li>
       <a
-        class="sort-by-ascending current-sort-type"
-        href="?dir=asc"
+        class:list={[
+          'sort-by-ascending',
+          state.dir === 'asc' && 'current-sort-type',
+        ]}
+        href={dirLink('asc')}
         data-sort-dir="asc"
       >
         <span class="visually-hidden">По возрастанию</span>
       </a>
     </li>
     <li>
-      <a class="sort-by-descending" href="?dir=desc" data-sort-dir="desc">
+      <a
+        class:list={[
+          'sort-by-descending',
+          state.dir === 'desc' && 'current-sort-type',
+        ]}
+        href={dirLink('desc')}
+        data-sort-dir="desc"
+      >
         <span class="visually-hidden">По убыванию</span>
       </a>
     </li>

@@ -2,18 +2,23 @@
 import Layout from '@/layouts/Layout.astro'
 import PageHead from '@/components/page-head.astro'
 import Button from '@/components/button.astro'
-import { PRODUCTS, priceLabel, titleOf } from '@/data/catalog'
+import { priceLabel } from '@/data/catalog'
+import { apiFor, cartOf } from '@/server/api'
 import { HOME } from '@/data/nav'
+
+const { items: products } = await apiFor(Astro.request).all()
+const cart = await cartOf(Astro.request)
+const inCart = new Map(cart.items.map((item) => [item.slug, item.quantity]))
 
 const title = 'Корзина — DEVICE'
 const description =
   'Товары, отложенные к покупке: количество, стоимость и оформление заказа.'
 ---
 
-<Layout {title} {description} inner>
+<Layout {title} {description} inner checkout>
   <PageHead heading="Корзина" crumbs={[HOME, { title: 'Корзина' }]} />
   <div class="cart-page">
-    <p class="cart-empty" data-cart-empty>
+    <p class="cart-empty" data-cart-empty hidden={cart.count > 0}>
       В корзине пусто. <a href="/catalog">Загляните в каталог</a> — там есть чем это
       исправить.
     </p>
@@ -21,26 +26,26 @@ const description =
       Заказ принят. Курьер позвонит по телефону из вашего профиля и уточнит
       этаж.
     </p>
-    <div class="cart-filled" data-cart-filled hidden>
+    <div class="cart-filled" data-cart-filled hidden={cart.count === 0}>
       <ul class="cart-list" data-cart-list>
         {
-          PRODUCTS.map((product) => (
+          products.map((product) => (
             <li
               class="cart-row"
               data-cart-row={product.slug}
               data-price={String(product.price)}
-              hidden
+              hidden={!inCart.has(product.slug)}
             >
               <img
                 class="cart-thumb"
-                src={product.image.src}
+                src={product.imagePath}
                 width="100"
                 height="105"
                 alt=""
               />
               <span class="cart-name">
                 <a href={`/product/${product.slug}`} data-cart-title>
-                  {titleOf(product)}
+                  {product.title}
                 </a>
                 <span class="cart-unit">
                   {priceLabel(product.price)} за штуку
@@ -54,8 +59,8 @@ const description =
                   class="cart-field"
                   type="text"
                   inputmode="numeric"
-                  value="1"
-                  aria-label={`Количество: ${titleOf(product)}`}
+                  value={String(inCart.get(product.slug) ?? 1)}
+                  aria-label={`Количество: ${product.title}`}
                   data-cart-amount
                 />
                 <button class="cart-step" type="button" data-cart-step="1">
@@ -63,11 +68,11 @@ const description =
                 </button>
               </span>
               <span class="cart-sum" data-cart-sum>
-                {priceLabel(product.price)}
+                {priceLabel(product.price * (inCart.get(product.slug) ?? 1))}
               </span>
               <button class="cart-remove" type="button" data-cart-remove>
                 <span class="visually-hidden">
-                  Удалить из корзины: {titleOf(product)}
+                  Удалить из корзины: {product.title}
                 </span>
               </button>
             </li>
@@ -76,7 +81,9 @@ const description =
       </ul>
       <div class="cart-total">
         <span class="cart-total-label">Итого</span>
-        <span class="cart-total-value" data-cart-total>0 руб.</span>
+        <span class="cart-total-value" data-cart-total>
+          {priceLabel(cart.total)}
+        </span>
         <Button class="cart-checkout" type="button" data-cart-checkout>
           Оформить заказ
         </Button>

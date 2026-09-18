@@ -1,12 +1,12 @@
 ---
-import { CATEGORIES, productsOf } from '@/data/catalog'
+import { CATEGORIES } from '@/data/catalog'
 
 interface Props {
-  counts?: boolean
+  counts?: Record<string, number>
   inner?: boolean
 }
 
-const { counts = false, inner = false } = Astro.props
+const { counts, inner = false } = Astro.props
 
 const amountLabel = (total: number): string => {
   const tail = total % 10
@@ -37,9 +37,9 @@ const amountLabel = (total: number): string => {
                 </>
               ))}
             </a>
-            {counts && (
+            {counts !== undefined && (
               <span class="catalog-item-count">
-                {amountLabel(productsOf(category.slug).length)}
+                {amountLabel(counts[category.slug] ?? 0)}
               </span>
             )}
           </li>

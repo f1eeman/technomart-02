@@ -138,3 +138,98 @@ test.describe('Поиск', () => {
     await expect(page.locator('.user-tools-cart')).toContainText('(1)')
   })
 })
+
+test.describe('Новый пароль', () => {
+  test('ссылка без токена сразу объясняет, что не так', async ({ page }) => {
+    await page.goto('/reset')
+
+    await expect(page.locator('[data-reset-error]')).toContainText('токена')
+  })
+
+  test('короткий пароль не принимается', async ({ page }) => {
+    await page.goto('/reset?token=mock-token')
+
+    const form = page.locator('[data-reset-page] form')
+
+    await form.locator('[data-field="password"]').fill('123')
+    await form.locator('[data-field="repeat"]').fill('123')
+    await form.locator('button[type="submit"]').click()
+
+    await expect(page.locator('[data-reset-error]')).toContainText('восьми')
+  })
+
+  test('пароли должны совпасть', async ({ page }) => {
+    await page.goto('/reset?token=mock-token')
+
+    const form = page.locator('[data-reset-page] form')
+
+    await form.locator('[data-field="password"]').fill('палка-палка-1')
+    await form.locator('[data-field="repeat"]').fill('палка-палка-2')
+    await form.locator('button[type="submit"]').click()
+
+    await expect(page.locator('[data-reset-error]')).toContainText('не совпали')
+  })
+
+  test('годная ссылка меняет пароль', async ({ page }) => {
+    await page.goto('/reset?token=mock-token')
+
+    const form = page.locator('[data-reset-page] form')
+
+    await form.locator('[data-field="password"]').fill('палка-палка-1')
+    await form.locator('[data-field="repeat"]').fill('палка-палка-1')
+    await form.locator('button[type="submit"]').click()
+
+    await expect(page.locator('[data-reset-done]')).toBeVisible()
+  })
+
+  test('негодная ссылка объясняет отказ', async ({ page }) => {
+    await page.goto('/reset?token=протухший')
+
+    const form = page.locator('[data-reset-page] form')
+
+    await form.locator('[data-field="password"]').fill('палка-палка-1')
+    await form.locator('[data-field="repeat"]').fill('палка-палка-1')
+    await form.locator('button[type="submit"]').click()
+
+    await expect(page.locator('[data-reset-error]')).toContainText('Ссылка')
+  })
+})
+
+test.describe('Магазин недоступен', () => {
+  test('каталог отвечает 503 и объясняет словами', async ({
+    page,
+    context,
+  }) => {
+    await context.addCookies([
+      { name: 'boom', value: '1', url: 'http://localhost:4331' },
+    ])
+
+    const response = await page.goto('/catalog/monopods')
+
+    expect(response?.status()).toBe(503)
+    expect(response?.headers()['retry-after']).toBe('30')
+    await expect(page.locator('h1')).toHaveText('Магазин временно недоступен')
+  })
+
+  test('страницы без товаров переживают отказ', async ({ page, context }) => {
+    await context.addCookies([
+      { name: 'boom', value: '1', url: 'http://localhost:4331' },
+    ])
+
+    const response = await page.goto('/')
+
+    expect(response?.status()).toBe(200)
+    await expect(page.locator('.catalog-list')).toBeVisible()
+  })
+})
+
+test.describe('Стойкость страниц', () => {
+  test('слишком длинный запрос не роняет поиск', async ({ page }) => {
+    const long = 'палка '.repeat(80)
+
+    const response = await page.goto(`/search?q=${encodeURIComponent(long)}`)
+
+    expect(response?.status()).toBe(200)
+    await expect(page.locator('h1')).toHaveText('Поиск по сайту')
+  })
+})

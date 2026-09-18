@@ -1,13 +1,13 @@
 ---
 import Button from '@/components/button.astro'
-import { priceLabel, searchTextOf, titleOf, type Product } from '@/data/catalog'
+import { priceLabel } from '@/data/catalog'
+import type { Product } from '@/scripts/api'
 
 interface Props {
   product: Product
-  searchable?: boolean
 }
 
-const { product, searchable = false } = Astro.props
+const { product } = Astro.props
 ---
 
 <li
@@ -18,15 +18,15 @@ const { product, searchable = false } = Astro.props
   data-bluetooth={product.bluetooth ? 'yes' : 'no'}
   data-kind={product.kind}
   data-popularity={String(product.popularity)}
-  data-search={searchable ? searchTextOf(product) : undefined}
 >
   <div class="product-item-image">
     <div class="image-box">
       <img
-        src={product.image.src}
+        src={product.imagePath}
         width="360"
         height="380"
-        alt={`Картинка — ${titleOf(product).toLowerCase()}`}
+        alt={`Картинка — ${product.title.toLowerCase()}`}
+        data-card-image
         data-fly-source
       />
     </div>
@@ -40,19 +40,16 @@ const { product, searchable = false } = Astro.props
     </p>
   </div>
   <div class="product-item-box">
-    <a class="product-item-title-link" href={`/product/${product.slug}`}>
-      <h3 class="product-item-title">
-        {
-          product.titleLines.map((line, at) => (
-            <>
-              {at > 0 && <br />}
-              {line}
-            </>
-          ))
-        }
-      </h3>
+    <a
+      class="product-item-title-link"
+      href={`/product/${product.slug}`}
+      data-card-link
+    >
+      <h3 class="product-item-title" data-card-title>{product.title}</h3>
     </a>
-    <span class="product-item-price">{priceLabel(product.price)}</span>
+    <span class="product-item-price" data-card-price>
+      {priceLabel(product.price)}
+    </span>
   </div>
 </li>
 

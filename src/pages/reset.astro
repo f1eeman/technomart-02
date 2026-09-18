@@ -1,0 +1,103 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import PageHead from '@/components/page-head.astro'
+import Button from '@/components/button.astro'
+import Field from '@/components/field.astro'
+import { HOME } from '@/data/nav'
+
+const title = 'Новый пароль — DEVICE'
+const description =
+  'Задайте новый пароль для входа в личный кабинет интернет-магазина DEVICE.'
+---
+
+<Layout {title} {description} inner>
+  <PageHead heading="Новый пароль" crumbs={[HOME, { title: 'Новый пароль' }]} />
+  <div class="reset-page" data-reset-page>
+    <p class="reset-lead">
+      Ссылка из письма работает час и только один раз. Задайте пароль — старые
+      входы после этого закроются на всех устройствах.
+    </p>
+    <form class="reset-form">
+      <Field
+        label="Новый пароль:"
+        id="reset-password"
+        field="password"
+        name="password"
+        type="password"
+        autocomplete="new-password"
+      />
+      <Field
+        label="Пароль ещё раз:"
+        id="reset-repeat"
+        field="repeat"
+        name="repeat"
+        type="password"
+        autocomplete="new-password"
+      />
+      <Button class="reset-submit" type="submit">Сохранить пароль</Button>
+      <p class="reset-error" data-reset-error hidden></p>
+    </form>
+    <p class="reset-done" data-reset-done hidden>
+      Пароль изменён. Теперь можно <a href="/login">войти</a> с новым.
+    </p>
+  </div>
+</Layout>
+
+<script>
+  import { initResetPage } from '@/scripts/forms'
+
+  initResetPage()
+</script>
+
+<style>
+  .reset-page {
+    width: var(--layout-width);
+    margin: 0 auto;
+    margin-bottom: 90px;
+    padding-right: 20px;
+    padding-left: 80px;
+  }
+
+  .reset-lead {
+    width: 560px;
+    margin: 0;
+    margin-bottom: 40px;
+    padding: 0;
+    font-family: var(--font-open-sans);
+    font-size: 15px;
+    font-weight: normal;
+    line-height: 30px;
+    color: var(--color-surface-dark);
+  }
+
+  .reset-form {
+    width: 390px;
+  }
+
+  .reset-submit {
+    padding-right: 23px;
+    padding-left: 23px;
+  }
+
+  .reset-error,
+  .reset-done {
+    margin: 0;
+    margin-top: 20px;
+    padding: 0;
+    font-family: var(--font-open-sans);
+    font-size: 15px;
+    font-weight: normal;
+    line-height: 30px;
+    color: var(--color-surface-dark);
+  }
+
+  .reset-done a {
+    color: var(--color-text);
+    text-decoration: underline;
+  }
+
+  .reset-done a:hover,
+  .reset-done a:focus {
+    text-decoration: none;
+  }
+</style>

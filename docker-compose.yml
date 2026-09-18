@@ -1,0 +1,17 @@
+services:
+  web:
+    build: .
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: 4321
+      API_BASE: ${API_BASE:-http://api:3000}
+    ports:
+      - '${WEB_PORT:-4321}:4321'
+    networks:
+      - api
+
+networks:
+  api:
+    name: device-api_default
+    external: true

@@ -1,4 +1,9 @@
 ---
+import { countLabel } from '@/scripts/format'
+import { cartOf } from '@/server/api'
+
+const cart = await cartOf(Astro.request)
+
 import logoFooter from '@/assets/images/logo-footer.png'
 
 interface Props {
@@ -44,7 +49,7 @@ const year = new Date().getFullYear()
         </li>
         <li>
           <a class="footer-cart" href="/cart" data-cart-bump
-            >Корзина<span data-cart-count></span></a
+            >Корзина<span data-cart-count>{countLabel(cart.count)}</span></a
           >
         </li>
       </ul>
