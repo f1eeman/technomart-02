@@ -1,9 +1,26 @@
-import { defineConfig, fontProviders } from 'astro/config'
+import node from '@astrojs/node'
+import { defineConfig, envField, fontProviders } from 'astro/config'
 import sitemap from '@astrojs/sitemap'
 
 export default defineConfig({
   site: 'https://device.example',
-  integrations: [sitemap()],
+  output: 'server',
+  adapter: node({ mode: 'standalone', experimentalDisableStreaming: true }),
+  integrations: [
+    sitemap({
+      filter: (page) =>
+        !['/503/', '/logout/', '/404/'].some((one) => page.endsWith(one)),
+    }),
+  ],
+  env: {
+    schema: {
+      API_BASE: envField.string({
+        context: 'server',
+        access: 'secret',
+        default: 'http://localhost:3000',
+      }),
+    },
+  },
   fonts: [
     {
       provider: fontProviders.local(),
