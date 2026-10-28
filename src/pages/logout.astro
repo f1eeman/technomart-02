@@ -1,6 +1,9 @@
 ---
 import { logoutOn } from '@/server/api'
 
+if (Astro.request.headers.get('sec-fetch-site') === 'cross-site')
+  return Astro.redirect('/')
+
 await logoutOn(Astro.request, Astro.response.headers)
 
 import Layout from '@/layouts/Layout.astro'
