@@ -149,7 +149,11 @@ export const createApi = (base: string, always?: HeadersInit) => ({
     ask<ProductsPage>(`${base}/api/products?${search(query)}`, init, always),
 
   priceRange: async (slug: string, init?: RequestInit): Promise<PriceRange> =>
-    ask<PriceRange>(`${base}/api/categories/${slug}/price-range`, init, always),
+    ask<PriceRange>(
+      `${base}/api/categories/${encodeURIComponent(slug)}/price-range`,
+      init,
+      always,
+    ),
 
   search: async (query: string, init?: RequestInit): Promise<SearchResult> =>
     ask<SearchResult>(
@@ -162,7 +166,11 @@ export const createApi = (base: string, always?: HeadersInit) => ({
     ask<Catalog>(`${base}/api/products/all`, init, always),
 
   bySlug: async (slug: string, init?: RequestInit): Promise<Product> =>
-    ask<Product>(`${base}/api/products/${slug}`, init, always),
+    ask<Product>(
+      `${base}/api/products/${encodeURIComponent(slug)}`,
+      init,
+      always,
+    ),
 
   categories: async (init?: RequestInit): Promise<Categories> =>
     ask<Categories>(`${base}/api/categories`, init, always),
@@ -183,7 +191,7 @@ export const createApi = (base: string, always?: HeadersInit) => ({
   setQuantity: async (slug: string, quantity: number): Promise<Cart> => {
     const body: QuantityBody = { quantity }
 
-    return ask<Cart>(`${base}/api/cart/items/${slug}`, {
+    return ask<Cart>(`${base}/api/cart/items/${encodeURIComponent(slug)}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
@@ -191,7 +199,9 @@ export const createApi = (base: string, always?: HeadersInit) => ({
   },
 
   dropFromCart: async (slug: string): Promise<Cart> =>
-    ask<Cart>(`${base}/api/cart/items/${slug}`, { method: 'DELETE' }),
+    ask<Cart>(`${base}/api/cart/items/${encodeURIComponent(slug)}`, {
+      method: 'DELETE',
+    }),
 
   clearCart: async (): Promise<Cart> =>
     ask<Cart>(`${base}/api/cart`, { method: 'DELETE' }),
