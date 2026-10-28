@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { signIn } from './helpers'
+import { signIn, signUp } from './helpers'
 
 test.describe('Модалки', () => {
   test('вход открывается, пустую форму трясёт', async ({ page }) => {
@@ -21,16 +21,19 @@ test.describe('Модалки', () => {
   })
 
   test('вход меняет шапку и запоминает имя', async ({ page }) => {
+    const email = await signUp(page, 'Светлана Модалкина')
+
+    await page.goto('/logout')
     await page.goto('/')
-    await signIn(page, 'Светлана Дурова')
+    await signIn(page, email)
 
     await expect(page.locator('[data-modal="login"]')).toBeHidden()
     await expect(page.locator('body')).toHaveAttribute('data-session', 'member')
-    await expect(page.locator('.name-link')).toHaveText('Светлана Дурова')
+    await expect(page.locator('.name-link')).toHaveText('Светлана Модалкина')
 
     await page.goto('/catalog')
 
-    await expect(page.locator('.name-link')).toHaveText('Светлана Дурова')
+    await expect(page.locator('.name-link')).toHaveText('Светлана Модалкина')
   })
 
   test('Esc закрывает модалку', async ({ page }) => {
@@ -81,8 +84,7 @@ test.describe('Модалки', () => {
   })
 
   test('выход возвращает гостя', async ({ page }) => {
-    await page.goto('/')
-    await signIn(page, 'Светлана Дурова')
+    await signUp(page, 'Светлана Выходова')
     await page.goto('/logout')
 
     await expect(page.locator('body')).toHaveAttribute('data-session', 'guest')

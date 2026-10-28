@@ -1,0 +1,990 @@
+[
+  {
+    "slug": "amateur-selfie-stick",
+    "title": "Любительская селфи-палка",
+    "categorySlug": "monopods",
+    "kind": "Телескопический",
+    "color": "black",
+    "price": 500,
+    "bluetooth": false,
+    "popularity": 64,
+    "specs": [
+      {
+        "label": "Длина",
+        "value": "85 см"
+      },
+      {
+        "label": "Вес",
+        "value": "180 г"
+      },
+      {
+        "label": "Материал",
+        "value": "Алюминий"
+      }
+    ],
+    "description": "Палка для тех, кто снимает себя два раза в год и не готов за это переплачивать.",
+    "imagePath": "/uploads/item-1.jpg"
+  },
+  {
+    "slug": "professional-selfie-stick",
+    "title": "Профессиональная селфи-палка",
+    "categorySlug": "monopods",
+    "kind": "Телескопический",
+    "color": "white",
+    "price": 1500,
+    "bluetooth": true,
+    "popularity": 91,
+    "specs": [
+      {
+        "label": "Длина",
+        "value": "120 см"
+      },
+      {
+        "label": "Вес",
+        "value": "240 г"
+      },
+      {
+        "label": "Материал",
+        "value": "Карбон"
+      }
+    ],
+    "description": "Профессионал отличается от любителя тем, что снимает себя каждый день и называет это работой.",
+    "imagePath": "/uploads/item-2.jpg"
+  },
+  {
+    "slug": "unsinkable-selfie-stick",
+    "title": "Непотопляемая селфи-палка",
+    "categorySlug": "monopods",
+    "kind": "Водостойкий",
+    "color": "blue",
+    "price": 2500,
+    "bluetooth": true,
+    "popularity": 78,
+    "specs": [
+      {
+        "label": "Длина",
+        "value": "95 см"
+      },
+      {
+        "label": "Глубина",
+        "value": "10 м"
+      },
+      {
+        "label": "Материал",
+        "value": "Полимер"
+      }
+    ],
+    "description": "Не тонет вместе с вами, а всплывает отдельно. Кадры дороже, чем вы думаете.",
+    "imagePath": "/uploads/item-3.jpg"
+  },
+  {
+    "slug": "follow-me-selfie-stick",
+    "title": "Селфи-палка «Следуй за мной»",
+    "categorySlug": "monopods",
+    "kind": "Моторизованный",
+    "color": "red",
+    "price": 4900,
+    "bluetooth": true,
+    "popularity": 97,
+    "specs": [
+      {
+        "label": "Длина",
+        "value": "140 см"
+      },
+      {
+        "label": "Поворот",
+        "value": "360°"
+      },
+      {
+        "label": "Заряд",
+        "value": "6 часов"
+      }
+    ],
+    "description": "Палка сама поворачивается за вашим лицом. Убежать от неё пока никому не удалось.",
+    "imagePath": "/uploads/item-4.jpg"
+  },
+  {
+    "slug": "pocket-selfie-stick",
+    "title": "Карманная селфи-палка",
+    "categorySlug": "monopods",
+    "kind": "Складной",
+    "color": "pink",
+    "price": 750,
+    "bluetooth": false,
+    "popularity": 55,
+    "specs": [
+      {
+        "label": "Длина",
+        "value": "62 см"
+      },
+      {
+        "label": "Вес",
+        "value": "120 г"
+      },
+      {
+        "label": "Материал",
+        "value": "Пластик"
+      }
+    ],
+    "description": "Складывается до размера ручки и теряется так же незаметно, как ручка.",
+    "imagePath": "/uploads/item-1.jpg"
+  },
+  {
+    "slug": "tripod-selfie-stick",
+    "title": "Селфи-палка со штативом",
+    "categorySlug": "monopods",
+    "kind": "Штатив",
+    "color": "black",
+    "price": 1900,
+    "bluetooth": true,
+    "popularity": 83,
+    "specs": [
+      {
+        "label": "Длина",
+        "value": "110 см"
+      },
+      {
+        "label": "Опор",
+        "value": "3 шт."
+      },
+      {
+        "label": "Нагрузка",
+        "value": "800 г"
+      }
+    ],
+    "description": "Три ноги вместо одной руки. Руку при этом всё равно приходится держать в кадре.",
+    "imagePath": "/uploads/item-2.jpg"
+  },
+  {
+    "slug": "bluetooth-selfie-stick",
+    "title": "Селфи-палка с пультом",
+    "categorySlug": "monopods",
+    "kind": "Телескопический",
+    "color": "white",
+    "price": 1200,
+    "bluetooth": true,
+    "popularity": 72,
+    "specs": [
+      {
+        "label": "Длина",
+        "value": "100 см"
+      },
+      {
+        "label": "Радиус пульта",
+        "value": "10 м"
+      },
+      {
+        "label": "Заряд",
+        "value": "30 часов"
+      }
+    ],
+    "description": "Пульт отстёгивается и теряется первым. Палка остаётся с вами навсегда.",
+    "imagePath": "/uploads/item-3.jpg"
+  },
+  {
+    "slug": "winter-selfie-stick",
+    "title": "Зимняя селфи-палка",
+    "categorySlug": "monopods",
+    "kind": "Водостойкий",
+    "color": "blue",
+    "price": 2100,
+    "bluetooth": false,
+    "popularity": 41,
+    "specs": [
+      {
+        "label": "Длина",
+        "value": "105 см"
+      },
+      {
+        "label": "Мороз",
+        "value": "до −40 °C"
+      },
+      {
+        "label": "Материал",
+        "value": "Сталь"
+      }
+    ],
+    "description": "Не леденеет в руке, потому что руку в этот момент лучше держать в кармане.",
+    "imagePath": "/uploads/item-4.jpg"
+  },
+  {
+    "slug": "giant-selfie-stick",
+    "title": "Гигантская селфи-палка",
+    "categorySlug": "monopods",
+    "kind": "Телескопический",
+    "color": "red",
+    "price": 8900,
+    "bluetooth": true,
+    "popularity": 88,
+    "specs": [
+      {
+        "label": "Длина",
+        "value": "8,5 м"
+      },
+      {
+        "label": "Вес",
+        "value": "5 кг"
+      },
+      {
+        "label": "Материал",
+        "value": "Карбон"
+      }
+    ],
+    "description": "Восемь с половиной метров. Восемь, Карл! В кадр помещается весь ваш район.",
+    "imagePath": "/uploads/item-1.jpg"
+  },
+  {
+    "slug": "gold-selfie-stick",
+    "title": "Позолоченная селфи-палка",
+    "categorySlug": "monopods",
+    "kind": "Моторизованный",
+    "color": "pink",
+    "price": 15900,
+    "bluetooth": true,
+    "popularity": 34,
+    "specs": [
+      {
+        "label": "Длина",
+        "value": "115 см"
+      },
+      {
+        "label": "Покрытие",
+        "value": "Золото 999"
+      },
+      {
+        "label": "Вес",
+        "value": "900 г"
+      }
+    ],
+    "description": "Снимает ровно так же, как обычная, но об этом никто не должен догадаться.",
+    "imagePath": "/uploads/item-2.jpg"
+  },
+  {
+    "slug": "kids-selfie-stick",
+    "title": "Детская селфи-палка",
+    "categorySlug": "monopods",
+    "kind": "Складной",
+    "color": "pink",
+    "price": 600,
+    "bluetooth": false,
+    "popularity": 47,
+    "specs": [
+      {
+        "label": "Длина",
+        "value": "55 см"
+      },
+      {
+        "label": "Вес",
+        "value": "90 г"
+      },
+      {
+        "label": "Материал",
+        "value": "Пластик"
+      }
+    ],
+    "description": "Мягкая, лёгкая и не бьётся. В отличие от телефона, который на неё крепится.",
+    "imagePath": "/uploads/item-3.jpg"
+  },
+  {
+    "slug": "drone-selfie-stick",
+    "title": "Летающая селфи-палка",
+    "categorySlug": "monopods",
+    "kind": "Моторизованный",
+    "color": "black",
+    "price": 24900,
+    "bluetooth": true,
+    "popularity": 99,
+    "specs": [
+      {
+        "label": "Высота",
+        "value": "30 м"
+      },
+      {
+        "label": "Полёт",
+        "value": "18 минут"
+      },
+      {
+        "label": "Вес",
+        "value": "640 г"
+      }
+    ],
+    "description": "Строго говоря, это квадрокоптер. Но продаётся он в разделе моноподов, и мы не спорим.",
+    "imagePath": "/uploads/item-4.jpg"
+  },
+  {
+    "slug": "vr-headset-start",
+    "title": "Шлем «Первый шаг»",
+    "categorySlug": "virtual-reality",
+    "kind": "Автономный",
+    "color": "black",
+    "price": 7900,
+    "bluetooth": true,
+    "popularity": 70,
+    "specs": [
+      {
+        "label": "Разрешение",
+        "value": "1920×1080"
+      },
+      {
+        "label": "Вес",
+        "value": "480 г"
+      },
+      {
+        "label": "Заряд",
+        "value": "3 часа"
+      }
+    ],
+    "description": "Первый шлем, после которого реальность кажется недоработанной версией.",
+    "imagePath": "/uploads/item-1.jpg"
+  },
+  {
+    "slug": "vr-headset-pro",
+    "title": "Шлем «Полное погружение»",
+    "categorySlug": "virtual-reality",
+    "kind": "Проводной",
+    "color": "white",
+    "price": 34900,
+    "bluetooth": true,
+    "popularity": 94,
+    "specs": [
+      {
+        "label": "Разрешение",
+        "value": "2880×1700"
+      },
+      {
+        "label": "Частота",
+        "value": "120 Гц"
+      },
+      {
+        "label": "Вес",
+        "value": "620 г"
+      }
+    ],
+    "description": "Погружение настолько полное, что мы обязаны напомнить: обед сам себя не приготовит.",
+    "imagePath": "/uploads/item-2.jpg"
+  },
+  {
+    "slug": "vr-glasses-cardboard",
+    "title": "Очки из картона",
+    "categorySlug": "virtual-reality",
+    "kind": "Для смартфона",
+    "color": "white",
+    "price": 300,
+    "bluetooth": false,
+    "popularity": 28,
+    "specs": [
+      {
+        "label": "Материал",
+        "value": "Картон"
+      },
+      {
+        "label": "Вес",
+        "value": "60 г"
+      },
+      {
+        "label": "Линзы",
+        "value": "34 мм"
+      }
+    ],
+    "description": "Виртуальная реальность за триста рублей. Ровно настолько виртуальная, насколько вы поверите.",
+    "imagePath": "/uploads/item-3.jpg"
+  },
+  {
+    "slug": "vr-gloves",
+    "title": "Перчатки обратной связи",
+    "categorySlug": "virtual-reality",
+    "kind": "Аксессуар",
+    "color": "blue",
+    "price": 18900,
+    "bluetooth": true,
+    "popularity": 61,
+    "specs": [
+      {
+        "label": "Датчиков",
+        "value": "20 шт."
+      },
+      {
+        "label": "Заряд",
+        "value": "8 часов"
+      },
+      {
+        "label": "Вес",
+        "value": "210 г"
+      }
+    ],
+    "description": "Теперь вы чувствуете виртуальные предметы. Виртуальные кирпичи, например.",
+    "imagePath": "/uploads/item-4.jpg"
+  },
+  {
+    "slug": "vr-treadmill",
+    "title": "Беговая платформа",
+    "categorySlug": "virtual-reality",
+    "kind": "Аксессуар",
+    "color": "black",
+    "price": 129000,
+    "bluetooth": true,
+    "popularity": 52,
+    "specs": [
+      {
+        "label": "Диаметр",
+        "value": "125 см"
+      },
+      {
+        "label": "Нагрузка",
+        "value": "130 кг"
+      },
+      {
+        "label": "Вес",
+        "value": "68 кг"
+      }
+    ],
+    "description": "Бежите в игре — бежите в комнате. Соседи снизу узнают о вашем хобби первыми.",
+    "imagePath": "/uploads/item-1.jpg"
+  },
+  {
+    "slug": "vr-chair",
+    "title": "Кресло пилота",
+    "categorySlug": "virtual-reality",
+    "kind": "Аксессуар",
+    "color": "red",
+    "price": 89000,
+    "bluetooth": true,
+    "popularity": 45,
+    "specs": [
+      {
+        "label": "Осей",
+        "value": "6"
+      },
+      {
+        "label": "Наклон",
+        "value": "±25°"
+      },
+      {
+        "label": "Нагрузка",
+        "value": "120 кг"
+      }
+    ],
+    "description": "Кресло наклоняется вместе с самолётом. Тошнота прилагается бесплатно.",
+    "imagePath": "/uploads/item-2.jpg"
+  },
+  {
+    "slug": "action-camera-basic",
+    "title": "Экшн-камера «Начальная»",
+    "categorySlug": "action-cameras",
+    "kind": "Компактная",
+    "color": "black",
+    "price": 4500,
+    "bluetooth": false,
+    "popularity": 58,
+    "specs": [
+      {
+        "label": "Видео",
+        "value": "1080p60"
+      },
+      {
+        "label": "Глубина",
+        "value": "10 м"
+      },
+      {
+        "label": "Вес",
+        "value": "95 г"
+      }
+    ],
+    "description": "Снимает всё, кроме того момента, ради которого вы её включили.",
+    "imagePath": "/uploads/item-1.jpg"
+  },
+  {
+    "slug": "action-camera-4k",
+    "title": "Экшн-камера 4K",
+    "categorySlug": "action-cameras",
+    "kind": "Компактная",
+    "color": "white",
+    "price": 19900,
+    "bluetooth": true,
+    "popularity": 89,
+    "specs": [
+      {
+        "label": "Видео",
+        "value": "4K60"
+      },
+      {
+        "label": "Глубина",
+        "value": "30 м"
+      },
+      {
+        "label": "Вес",
+        "value": "126 г"
+      }
+    ],
+    "description": "Четыре тысячи пикселей по горизонтали, чтобы разглядеть, как вы падаете.",
+    "imagePath": "/uploads/item-2.jpg"
+  },
+  {
+    "slug": "action-camera-360",
+    "title": "Панорамная камера 360°",
+    "categorySlug": "action-cameras",
+    "kind": "Панорамная",
+    "color": "blue",
+    "price": 32900,
+    "bluetooth": true,
+    "popularity": 76,
+    "specs": [
+      {
+        "label": "Видео",
+        "value": "5,7K"
+      },
+      {
+        "label": "Объективов",
+        "value": "2"
+      },
+      {
+        "label": "Вес",
+        "value": "158 г"
+      }
+    ],
+    "description": "Снимает вообще всё вокруг. Спрятаться от неё в кадре невозможно.",
+    "imagePath": "/uploads/item-3.jpg"
+  },
+  {
+    "slug": "action-camera-mini",
+    "title": "Камера-клипса",
+    "categorySlug": "action-cameras",
+    "kind": "Носимая",
+    "color": "pink",
+    "price": 8900,
+    "bluetooth": true,
+    "popularity": 63,
+    "specs": [
+      {
+        "label": "Видео",
+        "value": "2,7K"
+      },
+      {
+        "label": "Заряд",
+        "value": "90 минут"
+      },
+      {
+        "label": "Вес",
+        "value": "38 г"
+      }
+    ],
+    "description": "Цепляется на воротник и снимает ваш день от первого лица. Пересматривать необязательно.",
+    "imagePath": "/uploads/item-4.jpg"
+  },
+  {
+    "slug": "action-camera-thermal",
+    "title": "Камера с тепловизором",
+    "categorySlug": "action-cameras",
+    "kind": "Специальная",
+    "color": "red",
+    "price": 64900,
+    "bluetooth": true,
+    "popularity": 39,
+    "specs": [
+      {
+        "label": "Видео",
+        "value": "1080p30"
+      },
+      {
+        "label": "Диапазон",
+        "value": "−20…550 °C"
+      },
+      {
+        "label": "Вес",
+        "value": "210 г"
+      }
+    ],
+    "description": "Показывает, что холоднее всего в вашей квартире — окно, а не отношения.",
+    "imagePath": "/uploads/item-1.jpg"
+  },
+  {
+    "slug": "fitness-bracelet-simple",
+    "title": "Браслет «Просто шаги»",
+    "categorySlug": "fitness-bracelets",
+    "kind": "Шагомер",
+    "color": "black",
+    "price": 1900,
+    "bluetooth": true,
+    "popularity": 66,
+    "specs": [
+      {
+        "label": "Без подзарядки",
+        "value": "48 часов"
+      },
+      {
+        "label": "Экран",
+        "value": "0,96″"
+      },
+      {
+        "label": "Вес",
+        "value": "22 г"
+      }
+    ],
+    "description": "Считает шаги и молчит обо всём остальном. Иногда это лучшее качество устройства.",
+    "imagePath": "/uploads/item-1.jpg"
+  },
+  {
+    "slug": "fitness-bracelet-motivator",
+    "title": "Браслет «Мотиватор»",
+    "categorySlug": "fitness-bracelets",
+    "kind": "С пульсометром",
+    "color": "red",
+    "price": 3900,
+    "bluetooth": true,
+    "popularity": 92,
+    "specs": [
+      {
+        "label": "Без подзарядки",
+        "value": "14 дней"
+      },
+      {
+        "label": "Пульс",
+        "value": "24/7"
+      },
+      {
+        "label": "Вес",
+        "value": "25 г"
+      }
+    ],
+    "description": "Вибрирует, когда вы сидите дольше часа. Через неделю вы научитесь его снимать.",
+    "imagePath": "/uploads/item-2.jpg"
+  },
+  {
+    "slug": "fitness-bracelet-sleep",
+    "title": "Браслет «Сонный»",
+    "categorySlug": "fitness-bracelets",
+    "kind": "С пульсометром",
+    "color": "blue",
+    "price": 2900,
+    "bluetooth": true,
+    "popularity": 74,
+    "specs": [
+      {
+        "label": "Без подзарядки",
+        "value": "21 день"
+      },
+      {
+        "label": "Фазы сна",
+        "value": "4"
+      },
+      {
+        "label": "Вес",
+        "value": "23 г"
+      }
+    ],
+    "description": "Утром подробно объясняет, почему вы не выспались. Помочь при этом не предлагает.",
+    "imagePath": "/uploads/item-3.jpg"
+  },
+  {
+    "slug": "fitness-bracelet-swim",
+    "title": "Браслет для плавания",
+    "categorySlug": "fitness-bracelets",
+    "kind": "Водостойкий",
+    "color": "white",
+    "price": 5400,
+    "bluetooth": true,
+    "popularity": 57,
+    "specs": [
+      {
+        "label": "Без подзарядки",
+        "value": "10 дней"
+      },
+      {
+        "label": "Глубина",
+        "value": "50 м"
+      },
+      {
+        "label": "Вес",
+        "value": "28 г"
+      }
+    ],
+    "description": "Считает бассейны. Море считать отказывается — говорит, что там один бассейн.",
+    "imagePath": "/uploads/item-4.jpg"
+  },
+  {
+    "slug": "fitness-bracelet-kids",
+    "title": "Детский браслет",
+    "categorySlug": "fitness-bracelets",
+    "kind": "Шагомер",
+    "color": "pink",
+    "price": 2400,
+    "bluetooth": true,
+    "popularity": 48,
+    "specs": [
+      {
+        "label": "Без подзарядки",
+        "value": "7 дней"
+      },
+      {
+        "label": "GPS",
+        "value": "Есть"
+      },
+      {
+        "label": "Вес",
+        "value": "19 г"
+      }
+    ],
+    "description": "Родители знают, где ребёнок. Ребёнок знает, где кнопка «выключить».",
+    "imagePath": "/uploads/item-1.jpg"
+  },
+  {
+    "slug": "smart-watch-classic",
+    "title": "Часы «Классика»",
+    "categorySlug": "smart-watches",
+    "kind": "Классические",
+    "color": "black",
+    "price": 12900,
+    "bluetooth": true,
+    "popularity": 81,
+    "specs": [
+      {
+        "label": "Экран",
+        "value": "1,4″ AMOLED"
+      },
+      {
+        "label": "Заряд",
+        "value": "5 дней"
+      },
+      {
+        "label": "Вес",
+        "value": "48 г"
+      }
+    ],
+    "description": "Выглядят как обычные часы ровно до момента, когда на них приходит уведомление.",
+    "imagePath": "/uploads/item-1.jpg"
+  },
+  {
+    "slug": "smart-watch-sport",
+    "title": "Часы «Спорт»",
+    "categorySlug": "smart-watches",
+    "kind": "Спортивные",
+    "color": "red",
+    "price": 21900,
+    "bluetooth": true,
+    "popularity": 87,
+    "specs": [
+      {
+        "label": "Экран",
+        "value": "1,6″ AMOLED"
+      },
+      {
+        "label": "GPS",
+        "value": "Двухдиапазонный"
+      },
+      {
+        "label": "Заряд",
+        "value": "3 дня"
+      }
+    ],
+    "description": "Знают 140 видов спорта. Вы попробуете два и вернётесь к прогулкам.",
+    "imagePath": "/uploads/item-2.jpg"
+  },
+  {
+    "slug": "smart-watch-diver",
+    "title": "Часы для дайвинга",
+    "categorySlug": "smart-watches",
+    "kind": "Водостойкие",
+    "color": "blue",
+    "price": 46900,
+    "bluetooth": true,
+    "popularity": 53,
+    "specs": [
+      {
+        "label": "Глубина",
+        "value": "100 м"
+      },
+      {
+        "label": "Экран",
+        "value": "1,5″"
+      },
+      {
+        "label": "Вес",
+        "value": "92 г"
+      }
+    ],
+    "description": "Выдерживают сто метров глубины. Вы выдерживаете три, и это уже неплохо.",
+    "imagePath": "/uploads/item-3.jpg"
+  },
+  {
+    "slug": "smart-watch-light",
+    "title": "Часы «Лёгкие»",
+    "categorySlug": "smart-watches",
+    "kind": "Классические",
+    "color": "white",
+    "price": 8900,
+    "bluetooth": true,
+    "popularity": 69,
+    "specs": [
+      {
+        "label": "Экран",
+        "value": "1,2″"
+      },
+      {
+        "label": "Заряд",
+        "value": "9 дней"
+      },
+      {
+        "label": "Вес",
+        "value": "31 г"
+      }
+    ],
+    "description": "Почти не чувствуются на руке. Про них и забывают почти сразу.",
+    "imagePath": "/uploads/item-4.jpg"
+  },
+  {
+    "slug": "smart-watch-kids",
+    "title": "Детские часы с GPS",
+    "categorySlug": "smart-watches",
+    "kind": "Детские",
+    "color": "pink",
+    "price": 6900,
+    "bluetooth": true,
+    "popularity": 44,
+    "specs": [
+      {
+        "label": "Экран",
+        "value": "1,3″"
+      },
+      {
+        "label": "SIM",
+        "value": "nano"
+      },
+      {
+        "label": "Заряд",
+        "value": "2 дня"
+      }
+    ],
+    "description": "Звонят родителям одной кнопкой. Второй кнопкой — не звонят никому.",
+    "imagePath": "/uploads/item-1.jpg"
+  },
+  {
+    "slug": "quadcopter-training",
+    "title": "Квадрокоптер «Учебный»",
+    "categorySlug": "quadcopters",
+    "kind": "Учебный",
+    "color": "white",
+    "price": 5900,
+    "bluetooth": true,
+    "popularity": 60,
+    "specs": [
+      {
+        "label": "Дальность полёта",
+        "value": "100 м"
+      },
+      {
+        "label": "Полёт",
+        "value": "12 минут"
+      },
+      {
+        "label": "Вес",
+        "value": "180 г"
+      }
+    ],
+    "description": "Переживает первые десять падений. Одиннадцатое становится последним.",
+    "imagePath": "/uploads/item-1.jpg"
+  },
+  {
+    "slug": "quadcopter-photo",
+    "title": "Квадрокоптер «Съёмочный»",
+    "categorySlug": "quadcopters",
+    "kind": "Съёмочный",
+    "color": "black",
+    "price": 74900,
+    "bluetooth": true,
+    "popularity": 95,
+    "specs": [
+      {
+        "label": "Дальность полёта",
+        "value": "8 км"
+      },
+      {
+        "label": "Камера",
+        "value": "4K60"
+      },
+      {
+        "label": "Полёт",
+        "value": "34 минуты"
+      }
+    ],
+    "description": "Снимает свадьбы, горы и соседский огород. Последнее — случайно.",
+    "imagePath": "/uploads/item-2.jpg"
+  },
+  {
+    "slug": "quadcopter-laser",
+    "title": "Квадрокоптер с лазером",
+    "categorySlug": "quadcopters",
+    "kind": "Специальный",
+    "color": "red",
+    "price": 149000,
+    "bluetooth": true,
+    "popularity": 98,
+    "specs": [
+      {
+        "label": "Дальность полёта",
+        "value": "800 м"
+      },
+      {
+        "label": "Радиус поражения",
+        "value": "50 м"
+      },
+      {
+        "label": "Полёт",
+        "value": "22 минуты"
+      }
+    ],
+    "description": "Обычный, на первый взгляд, квадрокоптер с мощным лазером под видом камеры.",
+    "imagePath": "/uploads/item-3.jpg"
+  },
+  {
+    "slug": "quadcopter-racing",
+    "title": "Гоночный квадрокоптер",
+    "categorySlug": "quadcopters",
+    "kind": "Гоночный",
+    "color": "blue",
+    "price": 38900,
+    "bluetooth": true,
+    "popularity": 79,
+    "specs": [
+      {
+        "label": "Скорость",
+        "value": "160 км/ч"
+      },
+      {
+        "label": "Полёт",
+        "value": "6 минут"
+      },
+      {
+        "label": "Вес",
+        "value": "520 г"
+      }
+    ],
+    "description": "Шесть минут полёта и час поиска в кустах. Соотношение считается нормальным.",
+    "imagePath": "/uploads/item-4.jpg"
+  },
+  {
+    "slug": "quadcopter-pocket",
+    "title": "Карманный квадрокоптер",
+    "categorySlug": "quadcopters",
+    "kind": "Учебный",
+    "color": "pink",
+    "price": 15900,
+    "bluetooth": true,
+    "popularity": 51,
+    "specs": [
+      {
+        "label": "Дальность полёта",
+        "value": "500 м"
+      },
+      {
+        "label": "Полёт",
+        "value": "16 минут"
+      },
+      {
+        "label": "Вес",
+        "value": "135 г"
+      }
+    ],
+    "description": "Складывается в карман куртки и взлетает оттуда же, если забыть его выключить.",
+    "imagePath": "/uploads/item-1.jpg"
+  }
+]
