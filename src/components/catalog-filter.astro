@@ -1,16 +1,18 @@
 ---
 import Button from '@/components/button.astro'
-import { COLORS, priceLabel, type Product } from '@/data/catalog'
+import { COLORS, priceLabel } from '@/data/catalog'
+import type { CatalogState } from '@/scripts/catalog-url'
 
 interface Props {
-  products: Product[]
+  lowest: number
+  highest: number
+  state: CatalogState
 }
 
-const { products } = Astro.props
+const { lowest, highest, state } = Astro.props
 
-const prices = products.map((product) => product.price)
-const lowest = Math.min(...prices)
-const highest = Math.max(...prices)
+const min = state.min ?? lowest
+const max = state.max ?? highest
 
 const BLUETOOTH = [
   { value: 'yes', title: 'Есть' },
@@ -53,7 +55,7 @@ const BLUETOOTH = [
               name="min-price"
               type="text"
               inputmode="numeric"
-              value={String(lowest)}
+              value={String(min)}
               data-range-field="min"
             /></label
           >
@@ -62,7 +64,7 @@ const BLUETOOTH = [
               name="max-price"
               type="text"
               inputmode="numeric"
-              value={String(highest)}
+              value={String(max)}
               data-range-field="max"
             /></label
           >
@@ -81,6 +83,7 @@ const BLUETOOTH = [
                 name="color"
                 value={color.slug}
                 id={`filter-${color.slug}-color`}
+                checked={state.colors.includes(color.slug)}
                 data-filter-color
               />
               <label for={`filter-${color.slug}-color`}>{color.title}</label>
@@ -101,7 +104,7 @@ const BLUETOOTH = [
                 name="bluetooth"
                 value={option.value}
                 id={`filter-bluetooth-${option.value}`}
-                checked={option.value === 'any'}
+                checked={option.value === state.bt}
                 data-filter-bluetooth
               />
               <label for={`filter-bluetooth-${option.value}`}>
