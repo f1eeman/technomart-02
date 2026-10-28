@@ -1,4 +1,4 @@
-const PREFIX = '+7 '
+export const PREFIX = '+7 '
 const GROUPS = [3, 3, 2, 2]
 const MAX = 10
 const WHOLE = 10
@@ -172,17 +172,16 @@ export function attachPhoneMask(input: HTMLInputElement): PhoneMask {
   input.addEventListener('focus', () => {
     if (buffer.length > 0) return
 
-    buffer = LEAD
-    render(buffer.length)
+    input.value = PREFIX
+    input.setSelectionRange(PREFIX.length, PREFIX.length)
     requestAnimationFrame(() => {
-      render(buffer.length)
+      input.setSelectionRange(PREFIX.length, PREFIX.length)
     })
   })
 
   input.addEventListener('blur', () => {
-    if (buffer !== LEAD) return
+    if (buffer.length > 0) return
 
-    buffer = ''
     input.value = ''
   })
 

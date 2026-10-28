@@ -1,7 +1,7 @@
 import { priceLabel } from '@/scripts/format'
-import { readOrders } from '@/scripts/orders'
+import { createApi, type Order } from '@/scripts/api'
 import { attachPhoneMask } from '@/scripts/phone-mask'
-import { currentName, signIn } from '@/scripts/session'
+import { currentName } from '@/scripts/session'
 import { readText, writeText } from '@/scripts/storage'
 
 const fieldIn = (root: ParentNode, name: string): HTMLInputElement | null => {
@@ -22,11 +22,19 @@ const dateLabel = (iso: string): string => {
   })
 }
 
-const renderOrders = (page: ParentNode): void => {
+const STATUS: Record<Order['status'], string> = {
+  fresh: 'Новый',
+  working: 'В работе',
+  done: 'Выполнен',
+  cancelled: 'Отменён',
+}
+
+const api = createApi('')
+
+const renderOrders = (page: ParentNode, orders: Order[]): void => {
   const list = page.querySelector('[data-orders]')
   const template = page.querySelector('[data-order-template]')
   const empty = page.querySelector('[data-orders-empty]')
-  const orders = readOrders()
 
   if (empty instanceof HTMLElement) empty.hidden = orders.length > 0
 
@@ -47,21 +55,43 @@ const renderOrders = (page: ParentNode): void => {
     const date = item.querySelector('[data-order-date]')
     const total = item.querySelector('[data-order-total]')
     const lines = item.querySelector('[data-order-lines]')
+    const status = item.querySelector('[data-order-status]')
+    const cancel = item.querySelector('[data-order-cancel]')
 
-    if (date !== null) date.textContent = dateLabel(order.at)
+    if (date !== null)
+      date.textContent = `№ ${String(order.number)} от ${dateLabel(order.at)}`
 
     if (total !== null) total.textContent = priceLabel(order.total)
 
+    if (status !== null) status.textContent = STATUS[order.status]
+
     if (lines !== null)
-      for (const line of order.lines) {
+      for (const line of order.items) {
         const row = document.createElement('li')
 
-        row.textContent = line
+        row.textContent = `${line.title} — ${String(line.quantity)} шт.`
         lines.append(row)
       }
 
+    if (cancel instanceof HTMLElement) {
+      cancel.hidden = order.status !== 'fresh'
+      cancel.addEventListener('click', (event) => {
+        event.preventDefault()
+
+        void api.cancelOrder(order.number).then(() => {
+          void loadOrders(page)
+        })
+      })
+    }
+
     list.append(item)
   }
+}
+
+const loadOrders = async (page: ParentNode): Promise<void> => {
+  const { items } = await api.orders().catch(() => ({ items: [] }))
+
+  renderOrders(page, items)
 }
 
 export function initProfile(): void {
@@ -69,7 +99,7 @@ export function initProfile(): void {
 
   if (page === null) return
 
-  renderOrders(page)
+  void loadOrders(page)
 
   const form = page.querySelector('form')
   const name = fieldIn(page, 'name')
@@ -81,7 +111,12 @@ export function initProfile(): void {
 
   const mask = attachPhoneMask(phone)
 
-  name.value = currentName() ?? ''
+  const fillName = (): void => {
+    name.value = currentName() ?? name.value
+  }
+
+  fillName()
+  window.addEventListener('device:session', fillName)
   email.value = readText('email') ?? ''
 
   const storedPhone = readText('phone')
@@ -93,8 +128,6 @@ export function initProfile(): void {
 
   form.addEventListener('submit', (event) => {
     event.preventDefault()
-
-    if (name.value.trim().length > 0) signIn(name.value.trim())
 
     writeText('email', email.value.trim())
     writeText('phone', mask.digits())

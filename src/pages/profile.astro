@@ -68,9 +68,18 @@ const description =
             <li class="order">
               <p class="order-head">
                 <span class="order-date" data-order-date></span>
+                <span class="order-status" data-order-status></span>
                 <span class="order-total" data-order-total></span>
               </p>
               <ul class="order-lines" data-order-lines></ul>
+              <button
+                class="order-cancel"
+                type="button"
+                data-order-cancel
+                hidden
+              >
+                Отменить заказ
+              </button>
             </li>
           </template>
         </section>
@@ -186,6 +195,33 @@ const description =
     margin: 0;
     padding: 0;
     list-style: none;
+  }
+
+  .order-status {
+    font-family: var(--font-open-sans);
+    font-size: 13px;
+    font-weight: normal;
+    color: var(--color-surface-dark);
+    text-transform: uppercase;
+  }
+
+  .order-cancel {
+    margin-top: 15px;
+    padding: 0;
+    font-family: var(--font-open-sans);
+    font-size: 13px;
+    font-weight: normal;
+    color: var(--color-surface-dark);
+    text-decoration: underline;
+    background: none;
+    border: 0;
+    cursor: pointer;
+  }
+
+  .order-cancel:hover,
+  .order-cancel:focus {
+    color: var(--color-text);
+    text-decoration: none;
   }
 
   .orders .order {
