@@ -1,25 +1,21 @@
-import { calm, flipFrom, OUT, spotsOf } from '@/scripts/motion'
+import {
+  createApi,
+  type Product,
+  type ProductsPage,
+  type ProductsQuery,
+} from '@/scripts/api'
+import { searchOf, type CatalogState } from '@/scripts/catalog-url'
+import { priceLabel } from '@/scripts/format'
+import { calm, flipFrom, OUT, spotsOf, type Spot } from '@/scripts/motion'
+import { compare } from '@/scripts/compare'
 import { curtain, ghostsOf, shiftPack, slideIn } from '@/scripts/scene'
 
-type Field = 'price' | 'kind' | 'popularity'
-type Dir = 'asc' | 'desc'
-type Bluetooth = 'yes' | 'no' | 'any'
+type Reason = 'filter' | 'page'
 
-const PAGE_SIZE = 4
-const TOGGLE = 20
 const FLIP = 280
 const FLIP_DELAY = 60
 
-type Reason = 'first' | 'page' | 'filter'
-
-interface Card {
-  node: HTMLElement
-  price: number
-  color: string
-  bluetooth: string
-  kind: string
-  popularity: number
-}
+const api = createApi('')
 
 const numberOf = (raw: string | undefined, fallback: number): number => {
   const parsed = Number.parseInt(raw ?? '', 10)
@@ -27,28 +23,118 @@ const numberOf = (raw: string | undefined, fallback: number): number => {
   return Number.isFinite(parsed) ? parsed : fallback
 }
 
-const isField = (value: string | null): value is Field =>
+const isBluetooth = (value: string): value is CatalogState['bt'] =>
+  value === 'yes' || value === 'no' || value === 'any'
+
+const isField = (value: string): value is CatalogState['sort'] =>
   value === 'price' || value === 'kind' || value === 'popularity'
 
-const isBluetooth = (value: string | null): value is Bluetooth =>
-  value === 'yes' || value === 'no' || value === 'any'
+const isCategory = (value: string): value is ProductsQuery['category'] =>
+  value.length > 0
+
+const stateOf = (
+  search: string,
+  lowest: number,
+  highest: number,
+): CatalogState => {
+  const params = new URLSearchParams(search)
+  const sort = params.get('sort') ?? ''
+  const bt = params.get('bt') ?? ''
+
+  const min = Math.min(
+    Math.max(numberOf(params.get('min') ?? undefined, lowest), lowest),
+    highest,
+  )
+
+  return {
+    min,
+    max: Math.min(
+      Math.max(numberOf(params.get('max') ?? undefined, highest), min),
+      highest,
+    ),
+    colors: (params.get('colors') ?? '').split(',').filter(Boolean),
+    bt: isBluetooth(bt) ? bt : 'any',
+    sort: isField(sort) ? sort : 'price',
+    dir: params.get('dir') === 'desc' ? 'desc' : 'asc',
+    page: Math.max(numberOf(params.get('page') ?? undefined, 1), 1),
+  }
+}
+
+const queryOf = (
+  state: CatalogState,
+  category: ProductsQuery['category'],
+  lowest: number,
+  highest: number,
+): ProductsQuery => ({
+  category,
+  ...(state.min === lowest ? {} : { min: state.min }),
+  ...(state.max === highest ? {} : { max: state.max }),
+  ...(state.colors.length === 0 ? {} : { colors: state.colors.join(',') }),
+  ...(state.bt === 'any' ? {} : { bt: state.bt }),
+  ...(state.sort === 'price' ? {} : { sort: state.sort }),
+  ...(state.dir === 'asc' ? {} : { dir: state.dir }),
+  ...(state.page === 1 ? {} : { page: state.page }),
+})
+
+const fill = (card: HTMLElement, product: Product): HTMLElement => {
+  card.dataset['product'] = product.slug
+  card.dataset['price'] = String(product.price)
+  card.dataset['color'] = product.color
+  card.dataset['bluetooth'] = product.bluetooth ? 'yes' : 'no'
+  card.dataset['kind'] = product.kind
+  card.dataset['popularity'] = String(product.popularity)
+
+  const image = card.querySelector<HTMLImageElement>('[data-card-image]')
+
+  if (image !== null) {
+    image.src = product.imagePath
+    image.alt = `Картинка — ${product.title.toLowerCase()}`
+  }
+
+  const link = card.querySelector<HTMLAnchorElement>('[data-card-link]')
+
+  if (link !== null) link.href = `/product/${product.slug}`
+
+  const title = card.querySelector('[data-card-title]')
+
+  if (title !== null) title.textContent = product.title
+
+  const price = card.querySelector('[data-card-price]')
+
+  if (price !== null) price.textContent = priceLabel(product.price)
+
+  const toCart = card.querySelector<HTMLElement>('[data-cart-add]')
+
+  if (toCart !== null) toCart.dataset['cartAdd'] = product.slug
+
+  const toCompare = card.querySelector<HTMLElement>('[data-compare-add]')
+
+  if (toCompare !== null) {
+    toCompare.dataset['compareAdd'] = product.slug
+
+    const picked = compare.has(product.slug)
+
+    toCompare.textContent = picked
+      ? 'Убрать из сравнения'
+      : 'Добавить к сравнению'
+    toCompare.setAttribute('aria-pressed', picked ? 'true' : 'false')
+  }
+
+  return card
+}
 
 export function initCatalog(): void {
   const list = document.querySelector<HTMLElement>('[data-catalog]')
   const form = document.querySelector<HTMLFormElement>('[data-filter]')
+  const template = document.querySelector<HTMLTemplateElement>(
+    '[data-product-template]',
+  )
 
   if (list === null || form === null) return
 
-  const cards: Card[] = Array.from(
-    list.querySelectorAll<HTMLElement>('[data-product]'),
-  ).map((node) => ({
-    node,
-    price: numberOf(node.dataset['price'], 0),
-    color: node.dataset['color'] ?? '',
-    bluetooth: node.dataset['bluetooth'] ?? 'no',
-    kind: node.dataset['kind'] ?? '',
-    popularity: numberOf(node.dataset['popularity'], 0),
-  }))
+  const category = list.dataset['catalog'] ?? ''
+
+  if (!isCategory(category)) return
 
   const lowest = numberOf(form.dataset['lowest'], 0)
   const highest = numberOf(form.dataset['highest'], 0)
@@ -90,50 +176,27 @@ export function initCatalog(): void {
     '[data-catalog-ghosts]',
   )
 
+  const state = stateOf(location.search, lowest, highest)
+
   let dragging = false
-  let cameFrom = 1
-
-  const params = new URLSearchParams(location.search)
-
-  const state = {
-    min: numberOf(params.get('min') ?? undefined, lowest),
-    max: numberOf(params.get('max') ?? undefined, highest),
-    colors: new Set((params.get('colors') ?? '').split(',').filter(Boolean)),
-    bluetooth: isBluetooth(params.get('bt')) ? params.get('bt') : 'any',
-    sort: isField(params.get('sort')) ? params.get('sort') : 'price',
-    dir: params.get('dir') === 'desc' ? 'desc' : 'asc',
-    page: Math.max(numberOf(params.get('page') ?? undefined, 1), 1),
-  } as {
-    min: number
-    max: number
-    colors: Set<string>
-    bluetooth: Bluetooth
-    sort: Field
-    dir: Dir
-    page: number
-  }
-
-  state.min = Math.min(Math.max(state.min, lowest), highest)
-  state.max = Math.min(Math.max(state.max, state.min), highest)
+  let cameFrom = state.page
+  let generation = 0
 
   const paintRange = (): void => {
     if (range === null || bar === null) return
 
-    const width = range.clientWidth || 200
-    const from = (state.min - lowest) / span
-    const to = (state.max - lowest) / span
+    const left = ((state.min - lowest) / span) * 100
+    const right = ((state.max - lowest) / span) * 100
 
-    bar.style.marginLeft = `${String(from * width)}px`
-    bar.style.width = `${String((to - from) * width)}px`
+    bar.style.left = `${String(left)}%`
+    bar.style.right = `${String(100 - right)}%`
 
     const min = toggles.get('min')
     const max = toggles.get('max')
 
-    if (min !== undefined)
-      min.style.left = `${String(from * width - TOGGLE / 2)}px`
+    if (min !== undefined) min.style.left = `${String(left)}%`
 
-    if (max !== undefined)
-      max.style.left = `${String(to * width - TOGGLE / 2)}px`
+    if (max !== undefined) max.style.left = `${String(right)}%`
 
     const minField = fields.get('min')
     const maxField = fields.get('max')
@@ -144,24 +207,7 @@ export function initCatalog(): void {
   }
 
   const syncUrl = (): void => {
-    const next = new URLSearchParams()
-
-    if (state.min !== lowest) next.set('min', String(state.min))
-
-    if (state.max !== highest) next.set('max', String(state.max))
-
-    if (state.colors.size > 0)
-      next.set('colors', Array.from(state.colors).join(','))
-
-    if (state.bluetooth !== 'any') next.set('bt', state.bluetooth)
-
-    if (state.sort !== 'price') next.set('sort', state.sort)
-
-    if (state.dir !== 'asc') next.set('dir', state.dir)
-
-    if (state.page !== 1) next.set('page', String(state.page))
-
-    const query = next.toString()
+    const query = searchOf(state, { lowest, highest })
 
     history.replaceState(
       null,
@@ -170,57 +216,7 @@ export function initCatalog(): void {
     )
   }
 
-  const matches = (card: Card): boolean => {
-    if (card.price < state.min || card.price > state.max) return false
-
-    if (state.colors.size > 0 && !state.colors.has(card.color)) return false
-
-    if (state.bluetooth !== 'any' && card.bluetooth !== state.bluetooth)
-      return false
-
-    return true
-  }
-
-  const compare = (a: Card, b: Card): number => {
-    const sign = state.dir === 'asc' ? 1 : -1
-
-    if (state.sort === 'kind') return a.kind.localeCompare(b.kind, 'ru') * sign
-
-    if (state.sort === 'popularity') return (a.popularity - b.popularity) * sign
-
-    return (a.price - b.price) * sign
-  }
-
-  const render = (reason: Reason = 'filter'): void => {
-    const moving = reason !== 'first' && !dragging && !calm()
-    const seen = cards.filter((card) => !card.node.hidden).map((c) => c.node)
-    const before = moving ? spotsOf(seen) : null
-    const wasEmpty = empty?.hidden ?? true
-    const wasPage = cameFrom
-
-    const found = cards.filter(matches).sort(compare)
-    const pages = Math.max(Math.ceil(found.length / PAGE_SIZE), 1)
-
-    if (state.page > pages) state.page = pages
-
-    const from = (state.page - 1) * PAGE_SIZE
-    const shown = new Set(
-      found.slice(from, from + PAGE_SIZE).map((c) => c.node),
-    )
-
-    const stayed = new Set(seen)
-    const leaving = moving ? seen.filter((node) => !shown.has(node)) : []
-    const arriving = moving
-      ? Array.from(shown).filter((node) => !stayed.has(node))
-      : []
-
-    if (moving && reason === 'filter' && ghostLayer !== null && before !== null)
-      ghostsOf(leaving, before, ghostLayer)
-
-    for (const card of cards) card.node.hidden = !shown.has(card.node)
-
-    for (const card of found) list.append(card.node)
-
+  const paintControls = (page: ProductsPage): void => {
     for (const link of sortLinks)
       link.classList.toggle(
         'current-sort-type',
@@ -234,25 +230,58 @@ export function initCatalog(): void {
       )
 
     for (const item of pageItems) {
-      const page = numberOf(item.dataset['pageItem'], 1)
+      const number = numberOf(item.dataset['pageItem'], 1)
 
-      item.hidden = page > pages
-      item.classList.toggle('pagination-item-current', page === state.page)
+      item.hidden = number > page.totalPages
+      item.classList.toggle('pagination-item-current', number === page.page)
       item
         .querySelector('[data-page]')
-        ?.classList.toggle('link-current', page === state.page)
+        ?.classList.toggle('link-current', number === page.page)
     }
 
-    if (pagination !== null) pagination.hidden = found.length === 0
+    if (pagination !== null) pagination.hidden = page.items.length === 0
 
-    if (empty !== null) empty.hidden = found.length > 0
+    if (empty !== null) empty.hidden = page.items.length > 0
+  }
+
+  const paint = (
+    page: ProductsPage,
+    reason: Reason,
+    before: Map<Element, Spot> | null,
+  ): void => {
+    const wasEmpty = empty?.hidden ?? true
+    const wasPage = cameFrom
+    const moving = before !== null
+
+    const kept = new Map<string, HTMLElement>()
+
+    for (const node of list.querySelectorAll<HTMLElement>('[data-product]'))
+      kept.set(node.dataset['product'] ?? '', node)
+
+    const nodes = page.items.map((product) => {
+      const known = kept.get(product.slug)
+
+      if (known !== undefined) return known
+
+      const clone = template?.content.firstElementChild?.cloneNode(true)
+
+      return clone instanceof HTMLElement
+        ? fill(clone, product)
+        : document.createElement('li')
+    })
+
+    const arriving = nodes.filter(
+      (node) => !kept.has(node.dataset['product'] ?? ''),
+    )
+
+    list.replaceChildren(...nodes)
+
+    paintControls(page)
 
     if (moving && reason === 'page')
-      shiftPack(list, state.page > wasPage ? 1 : -1)
+      shiftPack(list, page.page > wasPage ? 1 : -1)
 
     if (moving && reason === 'filter' && before !== null) {
-      for (const node of leaving) before.delete(node)
-
       for (const node of arriving) before.delete(node)
 
       flipFrom(before, { duration: FLIP, easing: OUT, delay: FLIP_DELAY })
@@ -261,10 +290,37 @@ export function initCatalog(): void {
 
     if (moving && empty !== null && wasEmpty && !empty.hidden) slideIn(empty)
 
-    cameFrom = state.page
+    cameFrom = page.page
+    state.page = Math.min(page.page, page.totalPages)
+
+    if (state.page !== page.page) syncUrl()
+  }
+
+  const render = (reason: Reason): void => {
+    const moving = !dragging && !calm()
+    const shown = Array.from(
+      list.querySelectorAll<HTMLElement>('[data-product]'),
+    )
+    const before = moving ? spotsOf(shown) : null
 
     paintRange()
     syncUrl()
+
+    if (moving && reason === 'filter' && ghostLayer !== null && before !== null)
+      ghostsOf(shown, before, ghostLayer)
+
+    const token = (generation += 1)
+
+    void api
+      .products(queryOf(state, category, lowest, highest))
+      .then((page) => {
+        if (token !== generation) return
+
+        paint(page, reason, before)
+      })
+      .catch(() => {
+        if (token === generation) location.reload()
+      })
   }
 
   const setBound = (which: 'min' | 'max', value: number): void => {
@@ -274,7 +330,7 @@ export function initCatalog(): void {
     else state.max = Math.max(clamped, state.min)
 
     state.page = 1
-    render()
+    render('filter')
   }
 
   if (range !== null)
@@ -299,6 +355,7 @@ export function initCatalog(): void {
           toggle.removeEventListener('pointermove', move)
           toggle.removeEventListener('pointerup', stop)
           toggle.removeEventListener('pointercancel', stop)
+          render('filter')
         }
 
         toggle.addEventListener('pointermove', move)
@@ -329,46 +386,39 @@ export function initCatalog(): void {
       )
     })
 
-  for (const box of colorBoxes) {
-    box.checked = state.colors.has(box.value)
-
+  for (const box of colorBoxes)
     box.addEventListener('change', () => {
-      if (box.checked) state.colors.add(box.value)
-      else state.colors.delete(box.value)
-
+      state.colors = colorBoxes
+        .filter((item) => item.checked)
+        .map((item) => item.value)
       state.page = 1
-      render()
+      render('filter')
     })
-  }
 
-  for (const box of bluetoothBoxes) {
-    box.checked = box.value === state.bluetooth
-
+  for (const box of bluetoothBoxes)
     box.addEventListener('change', () => {
       if (!isBluetooth(box.value)) return
 
-      state.bluetooth = box.value
+      state.bt = box.value
       state.page = 1
-      render()
+      render('filter')
     })
-  }
 
   form.addEventListener('submit', (event) => {
     event.preventDefault()
-    render()
+    render('filter')
   })
 
   for (const link of sortLinks)
     link.addEventListener('click', (event) => {
+      const next = link.dataset['sortField'] ?? ''
+
+      if (!isField(next)) return
+
       event.preventDefault()
-
-      const next = link.dataset['sortField']
-
-      if (!isField(next ?? null)) return
-
-      state.sort = next as Field
+      state.sort = next
       state.page = 1
-      render()
+      render('filter')
     })
 
   for (const link of dirLinks)
@@ -376,7 +426,7 @@ export function initCatalog(): void {
       event.preventDefault()
       state.dir = link.dataset['sortDir'] === 'desc' ? 'desc' : 'asc'
       state.page = 1
-      render()
+      render('filter')
     })
 
   for (const link of document.querySelectorAll<HTMLElement>('[data-page]'))
@@ -389,14 +439,18 @@ export function initCatalog(): void {
   for (const link of document.querySelectorAll<HTMLElement>('[data-page-step]'))
     link.addEventListener('click', (event) => {
       event.preventDefault()
-      state.page = Math.max(
-        state.page + numberOf(link.dataset['pageStep'], 0),
-        1,
+
+      const shown = pageItems.filter((item) => !item.hidden).length
+      const last = Math.max(shown, 1)
+
+      state.page = Math.min(
+        Math.max(state.page + numberOf(link.dataset['pageStep'], 0), 1),
+        last,
       )
       render('page')
     })
 
   window.addEventListener('resize', paintRange)
 
-  render('first')
+  paintRange()
 }
