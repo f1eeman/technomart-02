@@ -1,0 +1,163 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import PageHead from '@/components/page-head.astro'
+import Button from '@/components/button.astro'
+import Field from '@/components/field.astro'
+import { HOME } from '@/data/nav'
+
+const title = 'Регистрация — DEVICE'
+const description =
+  'Аккаунт в интернет-магазине DEVICE: история заказов и данные покупателя под рукой.'
+---
+
+<Layout {title} {description} inner>
+  <PageHead heading="Регистрация" crumbs={[HOME, { title: 'Регистрация' }]} />
+  <div class="register-page" data-register-page>
+    <p class="register-lead">
+      Аккаунт нужен ровно для одного — видеть свои заказы. Корзину он не
+      трогает: она и без него не теряется.
+    </p>
+    <form class="register-form">
+      <Field
+        label="E-mail:"
+        id="register-email"
+        field="email"
+        name="email"
+        type="email"
+        autocomplete="email"
+      />
+      <Field
+        label="Как вас зовут:"
+        id="register-name"
+        field="name"
+        name="name"
+        type="text"
+        autocomplete="name"
+      />
+      <Field
+        label="Пароль:"
+        id="register-password"
+        field="password"
+        name="password"
+        type="password"
+        autocomplete="new-password"
+      />
+      <Field
+        label="Пароль ещё раз:"
+        id="register-repeat"
+        field="repeat"
+        name="repeat"
+        type="password"
+        autocomplete="new-password"
+      />
+      <p class="register-row">
+        <label class="register-checkbox">
+          <input class="visually-hidden" type="checkbox" name="remember" />
+          <span class="checkbox-indicator"></span>
+          Запомните меня
+        </label>
+        <a class="register-login" href="/login">Уже есть аккаунт</a>
+      </p>
+      <Button class="register-submit" type="submit">Завести аккаунт</Button>
+      <p class="register-error" data-register-error hidden></p>
+    </form>
+  </div>
+</Layout>
+
+<script>
+  import { initRegisterPage } from '@/scripts/forms'
+
+  initRegisterPage()
+</script>
+
+<style>
+  .register-page {
+    width: var(--layout-width);
+    margin: 0 auto;
+    margin-bottom: 90px;
+    padding-right: 20px;
+    padding-left: 80px;
+  }
+
+  .register-lead {
+    width: 560px;
+    margin: 0;
+    margin-bottom: 40px;
+    padding: 0;
+    font-family: var(--font-open-sans);
+    font-size: 15px;
+    font-weight: normal;
+    line-height: 30px;
+    color: var(--color-surface-dark);
+  }
+
+  .register-form {
+    width: 390px;
+  }
+
+  .register-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0;
+    margin-bottom: 35px;
+    padding: 0;
+  }
+
+  .register-checkbox {
+    position: relative;
+    padding-left: 35px;
+    cursor: pointer;
+  }
+
+  .register-checkbox input[type='checkbox'] + .checkbox-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--color-text);
+    border-radius: 50%;
+    transition-duration: 0.1s;
+  }
+
+  .register-checkbox input[type='checkbox']:focus + .checkbox-indicator {
+    border-color: var(--color-accent);
+    outline: none;
+  }
+
+  .register-checkbox input[type='checkbox']:checked + .checkbox-indicator {
+    border: 6px solid var(--color-accent);
+    background-color: var(--color-text);
+  }
+
+  .register-login {
+    font-family: var(--font-open-sans);
+    font-size: 13px;
+    font-weight: normal;
+    color: var(--color-surface-dark);
+    text-decoration: underline;
+  }
+
+  .register-login:hover,
+  .register-login:focus {
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  .register-submit {
+    padding-right: 23px;
+    padding-left: 23px;
+  }
+
+  .register-error {
+    margin: 0;
+    margin-top: 20px;
+    padding: 0;
+    font-family: var(--font-open-sans);
+    font-size: 13px;
+    font-weight: normal;
+    color: var(--color-surface-dark);
+  }
+</style>

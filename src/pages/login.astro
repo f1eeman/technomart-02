@@ -19,12 +19,12 @@ const description =
     </p>
     <form class="login-page-form">
       <Field
-        label="Логин:"
+        label="E-mail:"
         id="page-login"
         field="login"
         name="login"
-        type="text"
-        autocomplete="username"
+        type="email"
+        autocomplete="email"
       />
       <Field
         label="Пароль:"
@@ -41,10 +41,11 @@ const description =
           Запомните меня
         </label>
         <a class="restore" href="/restore">Я забыл пароль</a>
+        <a class="register" href="/register">Завести аккаунт</a>
       </p>
       <Button class="log-in" type="submit">Войти</Button>
       <p class="login-error" data-login-error hidden>
-        Заполните логин и пароль — без них войти не получится.
+        Не сходится: проверьте e-mail и пароль.
       </p>
     </form>
   </div>
@@ -123,13 +124,16 @@ const description =
     color: rgb(0 0 0 / 60%);
   }
 
-  .restore {
+  .restore,
+  .register {
     color: var(--color-text);
     text-decoration: underline;
   }
 
   .restore:hover,
-  .restore:focus {
+  .restore:focus,
+  .register:hover,
+  .register:focus {
     text-decoration: none;
   }
 

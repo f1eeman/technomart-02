@@ -1,4 +1,10 @@
 ---
+import { countLabel } from '@/scripts/format'
+import { cartOf, meOf } from '@/server/api'
+
+const cart = await cartOf(Astro.request)
+const me = await meOf(Astro.request)
+
 import logo from '@/assets/images/logo.png'
 import { CATEGORIES } from '@/data/catalog'
 
@@ -10,6 +16,11 @@ interface Props {
 const { inner = false, category } = Astro.props
 
 const anchor = (id: string): string => (inner ? `/#${id}` : `#${id}`)
+
+const asked =
+  Astro.url.pathname === '/search'
+    ? (Astro.url.searchParams.get('q') ?? '')
+    : ''
 
 const BOXES = [
   ['virtual-reality', 'monopods', 'action-cameras'],
@@ -49,6 +60,8 @@ const boxes = BOXES.map((slugs) =>
               name="q"
               id="user-search"
               data-search-query
+              maxlength="200"
+              value={asked}
               placeholder="Поиск по сайту"
             />
             <label for="user-search"
@@ -60,7 +73,7 @@ const boxes = BOXES.map((slugs) =>
         <ul class="user-tools-item user-menu">
           <li class="user-menu-item user-menu-name">
             <a class="name-link" href="/profile" data-session-name
-              >Светлана Дурова</a
+              >{me?.name ?? 'Покупатель'}</a
             >
           </li>
           <li class="user-menu-item user-menu-logout">
@@ -80,7 +93,8 @@ const boxes = BOXES.map((slugs) =>
           class="user-tools-item user-tools-cart"
           href="/cart"
           data-cart-target
-          data-cart-bump>Корзина<span data-cart-count></span></a
+          data-cart-bump
+          >Корзина<span data-cart-count>{countLabel(cart.count)}</span></a
         >
       </div>
       <nav class="main-navigation">

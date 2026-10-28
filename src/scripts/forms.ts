@@ -1,5 +1,6 @@
 import { closeModal, OPENED, shakeModal } from '@/scripts/modal'
-import { signIn } from '@/scripts/session'
+import { createApi } from '@/scripts/api'
+import { signIn, signUp } from '@/scripts/session'
 import { readText, writeText } from '@/scripts/storage'
 
 const fieldIn = (
@@ -14,8 +15,16 @@ const fieldIn = (
     : null
 }
 
+const api = createApi('')
+
 const blank = (field: HTMLInputElement | HTMLTextAreaElement | null): boolean =>
   field === null || field.value.trim().length === 0
+
+const remembered = (root: ParentNode): boolean => {
+  const box = root.querySelector('[name="remember"]')
+
+  return box instanceof HTMLInputElement && box.checked
+}
 
 export function initLoginForm(): void {
   const modal = document.querySelector<HTMLElement>('[data-modal="login"]')
@@ -29,9 +38,9 @@ export function initLoginForm(): void {
   if (form === null || login === null || password === null) return
 
   modal.addEventListener(OPENED, () => {
-    const stored = readText('login')
+    const stored = readText('email')
 
-    if (stored === null) {
+    if (stored === null || stored === '') {
       login.focus()
 
       return
@@ -50,9 +59,14 @@ export function initLoginForm(): void {
       return
     }
 
-    signIn(login.value.trim())
-    password.value = ''
-    closeModal(modal)
+    void signIn(login.value.trim(), password.value, remembered(modal))
+      .then(() => {
+        password.value = ''
+        closeModal(modal)
+      })
+      .catch(() => {
+        shakeModal(modal)
+      })
   })
 }
 
@@ -68,7 +82,7 @@ export function initLoginPage(): void {
 
   if (form === null || login === null || password === null) return
 
-  login.value = readText('login') ?? ''
+  login.value = readText('email') ?? ''
 
   form.addEventListener('submit', (event) => {
     event.preventDefault()
@@ -79,8 +93,83 @@ export function initLoginPage(): void {
 
     if (bad) return
 
-    signIn(login.value.trim())
-    location.href = '/profile'
+    void signIn(login.value.trim(), password.value, remembered(page))
+      .then(() => {
+        location.href = '/profile'
+      })
+      .catch(() => {
+        if (error instanceof HTMLElement) error.hidden = false
+      })
+  })
+}
+
+export function initRegisterPage(): void {
+  const page = document.querySelector('[data-register-page]')
+
+  if (page === null) return
+
+  const form = page.querySelector('form')
+  const email = fieldIn(page, 'email')
+  const name = fieldIn(page, 'name')
+  const password = fieldIn(page, 'password')
+  const repeat = fieldIn(page, 'repeat')
+  const error = page.querySelector('[data-register-error]')
+
+  if (
+    form === null ||
+    email === null ||
+    name === null ||
+    password === null ||
+    repeat === null
+  )
+    return
+
+  const complain = (text: string): void => {
+    if (!(error instanceof HTMLElement)) return
+
+    error.textContent = text
+    error.hidden = false
+  }
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault()
+
+    if (error instanceof HTMLElement) error.hidden = true
+
+    if (blank(email) || blank(name) || blank(password)) {
+      complain('Заполните все поля — без них аккаунт не завести.')
+
+      return
+    }
+
+    if (password.value.length < 8) {
+      complain('Пароль короче восьми знаков.')
+
+      return
+    }
+
+    if (password.value !== repeat.value) {
+      complain('Пароли не совпали.')
+
+      return
+    }
+
+    void signUp(
+      email.value.trim(),
+      password.value,
+      name.value.trim(),
+      remembered(page),
+    )
+      .then(() => {
+        location.href = '/profile'
+      })
+      .catch((reason: unknown) => {
+        complain(
+          reason instanceof Error && reason.message.includes('занят')
+            ? 'Такой адрес уже занят. Попробуйте войти.'
+            : 'Завести аккаунт не вышло. Попробуйте ещё раз.',
+        )
+      })
   })
 }
 
@@ -109,9 +198,69 @@ export function initRestoreForm(): void {
     if (bad) return
 
     writeText('email', email.value.trim())
+
+    void api.askReset(email.value.trim())
+
     form.hidden = true
 
     if (done instanceof HTMLElement) done.hidden = false
+  })
+}
+
+export function initResetPage(): void {
+  const page = document.querySelector('[data-reset-page]')
+
+  if (page === null) return
+
+  const form = page.querySelector('form')
+  const password = fieldIn(page, 'password')
+  const repeat = fieldIn(page, 'repeat')
+  const error = page.querySelector('[data-reset-error]')
+  const done = page.querySelector('[data-reset-done]')
+  const token = new URLSearchParams(location.search).get('token') ?? ''
+
+  if (form === null || password === null || repeat === null) return
+
+  const complain = (text: string): void => {
+    if (!(error instanceof HTMLElement)) return
+
+    error.textContent = text
+    error.hidden = false
+  }
+
+  if (token === '') complain('Ссылка без токена — попросите новую.')
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault()
+
+    if (error instanceof HTMLElement) error.hidden = true
+
+    if (password.value.length < 8) {
+      complain('Пароль короче восьми знаков.')
+
+      return
+    }
+
+    if (password.value !== repeat.value) {
+      complain('Пароли не совпали.')
+
+      return
+    }
+
+    void api
+      .applyReset(token, password.value)
+      .then(() => {
+        form.hidden = true
+
+        if (done instanceof HTMLElement) done.hidden = false
+      })
+      .catch((reason: unknown) => {
+        complain(
+          reason instanceof Error
+            ? reason.message
+            : 'Ссылка не сработала — попросите новую.',
+        )
+      })
   })
 }
 

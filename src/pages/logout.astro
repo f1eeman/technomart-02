@@ -1,4 +1,8 @@
 ---
+import { logoutOn } from '@/server/api'
+
+await logoutOn(Astro.request, Astro.response.headers)
+
 import Layout from '@/layouts/Layout.astro'
 import PageHead from '@/components/page-head.astro'
 import { HOME } from '@/data/nav'
@@ -20,12 +24,6 @@ const description = 'Выход из личного кабинета интер�
     </p>
   </div>
 </Layout>
-
-<script>
-  import { signOut } from '@/scripts/session'
-
-  signOut()
-</script>
 
 <style>
   .logout-page {
