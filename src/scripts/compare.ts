@@ -15,31 +15,32 @@ export function initCompareControls(): void {
     for (const host of hosts) mark(host, 'full', 'on')
   }
 
-  for (const button of document.querySelectorAll<HTMLElement>(
-    '[data-compare-add]',
-  )) {
-    const slug = button.dataset['compareAdd']
+  document.addEventListener('click', (event) => {
+    const target = event.target
 
-    if (slug === undefined) continue
+    if (!(target instanceof Element)) return
 
-    button.addEventListener('click', (event) => {
-      event.preventDefault()
+    const button = target.closest<HTMLElement>('[data-compare-add]')
+    const slug = button?.dataset['compareAdd']
 
-      if (compare.has(slug)) {
-        compare.drop(slug)
+    if (button === null || button === undefined || slug === undefined) return
 
-        return
-      }
+    event.preventDefault()
 
-      if (compare.count() >= LIMIT) {
-        refuse(button)
+    if (compare.has(slug)) {
+      compare.drop(slug)
 
-        return
-      }
+      return
+    }
 
-      compare.add(slug)
-    })
-  }
+    if (compare.count() >= LIMIT) {
+      refuse(button)
+
+      return
+    }
+
+    compare.add(slug)
+  })
 
   let known: number | null = null
 
