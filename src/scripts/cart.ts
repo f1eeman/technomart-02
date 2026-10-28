@@ -1,10 +1,16 @@
+import { createApi } from '@/scripts/api'
+import { createCart, type Lines } from '@/scripts/cart-store'
 import { countLabel, priceLabel } from '@/scripts/format'
 import { flyToCart, LANDED } from '@/scripts/fly'
+import { closeModal, openModal, OPENED, shakeModal } from '@/scripts/modal'
 import { calm, countUp, mark } from '@/scripts/motion'
-import { addOrder } from '@/scripts/orders'
-import { createStore, type Items } from '@/scripts/store'
+import { attachPhoneMask, LEAD } from '@/scripts/phone-mask'
+import { currentName } from '@/scripts/session'
+import { readText, writeText } from '@/scripts/storage'
 
-export const cart = createStore('cart')
+const api = createApi('')
+
+export const cart = createCart()
 
 const COLLAPSE = 240
 const TOTAL_COUNT = 380
@@ -22,25 +28,36 @@ const sourceFor = (button: HTMLElement): Element | null =>
   document.querySelector('[data-fly-source]')
 
 export function initCartControls(): void {
-  for (const button of document.querySelectorAll<HTMLElement>(
-    '[data-cart-add]',
-  )) {
-    const slug = button.dataset['cartAdd']
+  document.addEventListener('click', (event) => {
+    const target = event.target
 
-    if (slug === undefined) continue
+    if (!(target instanceof Element)) return
 
-    button.addEventListener('click', (event) => {
-      event.preventDefault()
-      cart.add(slug)
-      mark(button, 'ran', 'on')
-      flyToCart(sourceFor(button))
-    })
-  }
+    const button = target.closest<HTMLElement>('[data-cart-add]')
+    const slug = button?.dataset['cartAdd']
+
+    if (button === null || button === undefined || slug === undefined) return
+
+    event.preventDefault()
+    cart.add(slug)
+    mark(button, 'ran', 'on')
+    flyToCart(sourceFor(button))
+  })
 
   const slots = document.querySelectorAll<HTMLElement>('[data-cart-count]')
   const hosts = document.querySelectorAll<HTMLElement>('[data-cart-bump]')
 
-  let known: number | null = null
+  const shownCount = (): number | null => {
+    const text = slots[0]?.textContent?.trim() ?? ''
+
+    if (text === '') return 0
+
+    const digits = text.replace(/\D/gu, '')
+
+    return digits === '' ? null : Number.parseInt(digits, 10)
+  }
+
+  let known: number | null = shownCount()
   let pending: 'up' | 'down' | null = null
 
   const bump = (way: 'up' | 'down'): void => {
@@ -90,7 +107,7 @@ export function initCartPage(): void {
   const empty = document.querySelector('[data-cart-empty]')
   const filled = document.querySelector('[data-cart-filled]')
   const total = document.querySelector('[data-cart-total]')
-  const checkout = document.querySelector('[data-cart-checkout]')
+  const checkout = document.querySelector<HTMLElement>('[data-cart-checkout]')
   const done = document.querySelector('[data-cart-done]')
 
   let ordered = false
@@ -159,7 +176,7 @@ export function initCartPage(): void {
     }
   }
 
-  const render = (items: Items): void => {
+  const render = (items: Lines): void => {
     let sum = 0
     let lines = 0
 
@@ -206,31 +223,97 @@ export function initCartPage(): void {
     instant = false
   }
 
+  const modal = document.querySelector<HTMLElement>('[data-modal="checkout"]')
+  const nameField = modal?.querySelector('[data-field="name"]')
+  const phoneField = modal?.querySelector('[data-field="phone"]')
+  const changed = modal?.querySelector<HTMLElement>('[data-checkout-changed]')
+  const sumSlot = modal?.querySelector<HTMLElement>('[data-checkout-total]')
+  const modalForm = modal?.querySelector('form')
+
+  const mask =
+    phoneField instanceof HTMLInputElement ? attachPhoneMask(phoneField) : null
+
+  modal?.addEventListener(OPENED, () => {
+    if (nameField instanceof HTMLInputElement && nameField.value === '')
+      nameField.value = currentName() ?? readText('name') ?? ''
+
+    const stored = readText('phone')
+
+    if (
+      phoneField instanceof HTMLInputElement &&
+      phoneField.value === '' &&
+      stored !== null &&
+      stored.length > 0
+    ) {
+      phoneField.value = stored
+      phoneField.dispatchEvent(new Event('input', { bubbles: true }))
+    }
+  })
+
   checkout?.addEventListener('click', (event) => {
     event.preventDefault()
 
-    if (cart.count() === 0) return
+    if (cart.count() === 0 || modal === null) return
 
-    const items = cart.items()
-    const lines: string[] = []
-    let sum = 0
+    if (changed !== null && changed !== undefined) changed.hidden = true
 
-    for (const { row, slug } of rows) {
-      const amount = items[slug] ?? 0
+    if (sumSlot !== null && sumSlot !== undefined)
+      sumSlot.textContent = priceLabel(cart.total())
 
-      if (amount === 0) continue
+    openModal(modal, checkout)
+  })
 
-      sum += priceOf(row) * amount
+  let placing = false
 
-      const name = row.querySelector('[data-cart-title]')?.textContent?.trim()
+  modalForm?.addEventListener('submit', (event) => {
+    event.preventDefault()
 
-      lines.push(`${name ?? slug} — ${String(amount)} шт.`)
+    if (placing) return
+
+    if (
+      modal === null ||
+      !(nameField instanceof HTMLInputElement) ||
+      !(phoneField instanceof HTMLInputElement)
+    )
+      return
+
+    const who = nameField.value.trim()
+    const digits = mask?.digits() ?? phoneField.value
+
+    if (who.length === 0 || digits.length < 10) {
+      shakeModal(modal)
+
+      return
     }
 
-    addOrder({ at: new Date().toISOString(), total: sum, lines })
-    ordered = true
-    instant = true
-    cart.clear()
+    writeText('name', who)
+    writeText('phone', digits)
+
+    placing = true
+
+    void api
+      .placeOrder({
+        name: who,
+        phone: `+${LEAD}${digits}`,
+        expected: cart.total(),
+      })
+      .then(() => {
+        placing = false
+        ordered = true
+        instant = true
+        cart.clear()
+        closeModal(modal)
+      })
+      .catch(() => {
+        placing = false
+
+        if (changed !== null && changed !== undefined) changed.hidden = false
+
+        void cart.refresh().then(() => {
+          if (sumSlot !== null && sumSlot !== undefined)
+            sumSlot.textContent = priceLabel(cart.total())
+        })
+      })
   })
 
   cart.watch(render)
