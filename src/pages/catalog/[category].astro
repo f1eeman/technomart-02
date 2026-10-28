@@ -5,31 +5,87 @@ import CatalogFilter from '@/components/catalog-filter.astro'
 import CatalogSort from '@/components/catalog-sort.astro'
 import Pagination from '@/components/pagination.astro'
 import ProductCard from '@/components/product-card.astro'
-import {
-  CATEGORIES,
-  PAGE_SIZE,
-  productsOf,
-  type Category,
-} from '@/data/catalog'
+import { categoryBySlug } from '@/data/catalog'
 import { CATALOG, HOME } from '@/data/nav'
+import { ApiError, type ProductsQuery } from '@/scripts/api'
+import type { CatalogBounds, CatalogState } from '@/scripts/catalog-url'
+import { apiFor } from '@/server/api'
 
-export function getStaticPaths() {
-  return CATEGORIES.map((category) => ({
-    params: { category: category.slug },
-    props: { category },
-  }))
+const category = categoryBySlug(Astro.params.category ?? '')
+
+if (category === undefined) return Astro.rewrite('/404')
+
+const asked = Astro.url.searchParams
+
+const oneOf = <T extends string>(
+  raw: string | null,
+  allowed: readonly T[],
+): T | undefined => allowed.find((item) => item === raw)
+
+const numberOf = (raw: string | null): number | undefined => {
+  if (raw === null) return undefined
+
+  const parsed = Number.parseInt(raw, 10)
+
+  return Number.isFinite(parsed) ? parsed : undefined
 }
 
-interface Props {
-  category: Category
+const bt = oneOf(asked.get('bt'), ['yes', 'no', 'any'] as const)
+const sort = oneOf(asked.get('sort'), ['price', 'kind', 'popularity'] as const)
+const dir = oneOf(asked.get('dir'), ['asc', 'desc'] as const)
+const min = numberOf(asked.get('min'))
+const max = numberOf(asked.get('max'))
+const page_ = numberOf(asked.get('page'))
+const colors = asked.get('colors')
+
+const query: ProductsQuery = {
+  category: category.slug,
+  ...(min === undefined ? {} : { min }),
+  ...(max === undefined ? {} : { max }),
+  ...(colors === null ? {} : { colors }),
+  ...(bt === undefined ? {} : { bt }),
+  ...(sort === undefined ? {} : { sort }),
+  ...(dir === undefined ? {} : { dir }),
+  ...(page_ === undefined ? {} : { page: page_ }),
 }
 
-const { category } = Astro.props
-const products = productsOf(category.slug)
-const pages = Math.ceil(products.length / PAGE_SIZE)
+const api = apiFor(Astro.request)
+
+const [range, categories, page] = await Promise.all([
+  api.priceRange(category.slug),
+  api.categories(),
+  api.products(query).catch((error: unknown) => {
+    if (error instanceof ApiError && error.status === 400)
+      return api.products({ category: category.slug })
+
+    throw error
+  }),
+])
+
+const bounds: CatalogBounds = { lowest: range.min, highest: range.max }
+
+const state: CatalogState = {
+  min: min ?? bounds.lowest,
+  max: max ?? bounds.highest,
+  colors: colors === null ? [] : colors.split(',').filter(Boolean),
+  bt: bt ?? 'any',
+  sort: sort ?? 'price',
+  dir: dir ?? 'asc',
+  page: page_ ?? 1,
+}
+
+const inCategory =
+  categories.items.find((item) => item.slug === category.slug)?.total ?? 0
+const maxPages = Math.max(Math.ceil(inCategory / page.pageSize), 1)
+const sample =
+  page.items[0] ??
+  (await api
+    .products({ category: category.slug })
+    .then((all) => all.items[0] ?? null)
+    .catch(() => null))
 
 const title = `${category.title} — DEVICE`
-const description = `${category.title} в интернет-магазине DEVICE: ${String(products.length)} позиций, фильтр по цене, цвету и Bluetooth.`
+const description = `${category.title} в интернет-магазине DEVICE: ${String(page.total)} позиций, фильтр по цене, цвету и Bluetooth.`
 ---
 
 <Layout {title} {description} inner category={category.slug}>
@@ -38,20 +94,34 @@ const description = `${category.title} в интернет-магазине DEVI
     crumbs={[HOME, CATALOG, { title: category.title }]}
   />
   <div class="catalog-columns">
-    <CatalogFilter {products} />
+    <CatalogFilter lowest={range.min} highest={range.max} {state} />
     <div class="sort-catalog-wrapper">
-      <CatalogSort />
+      <CatalogSort {state} {bounds} />
       <section class="products-catalog">
         <h2 class="visually-hidden">Список: {category.title}</h2>
-        <ul class="products-catalog-list" data-catalog>
-          {products.map((product) => <ProductCard {product} />)}
+        <ul class="products-catalog-list" data-catalog={category.slug}>
+          {page.items.map((product) => <ProductCard {product} />)}
         </ul>
         <div class="catalog-ghosts" data-catalog-ghosts aria-hidden="true">
         </div>
-        <p class="catalog-empty" data-catalog-empty hidden>
+        <p class="catalog-empty" data-catalog-empty hidden={page.total > 0}>
           Под такой фильтр ничего не подошло. Попробуйте ослабить условия.
         </p>
-        <Pagination {pages} />
+        <Pagination
+          pages={maxPages}
+          active={page.totalPages}
+          current={page.page}
+          empty={page.total === 0}
+          {state}
+          {bounds}
+        />
+        {
+          sample !== null && (
+            <template data-product-template>
+              <ProductCard product={sample} />
+            </template>
+          )
+        }
       </section>
     </div>
   </div>

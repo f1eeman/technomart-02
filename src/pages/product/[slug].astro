@@ -2,37 +2,30 @@
 import Layout from '@/layouts/Layout.astro'
 import PageHead from '@/components/page-head.astro'
 import Button from '@/components/button.astro'
-import {
-  categoryBySlug,
-  COLORS,
-  PRODUCTS,
-  priceLabel,
-  titleOf,
-  type Product,
-} from '@/data/catalog'
+import { categoryBySlug, COLORS, priceLabel } from '@/data/catalog'
 import { CATALOG, HOME } from '@/data/nav'
+import { ApiError } from '@/scripts/api'
+import { apiFor } from '@/server/api'
 
-export function getStaticPaths() {
-  return PRODUCTS.map((product) => ({
-    params: { slug: product.slug },
-    props: { product },
-  }))
-}
+const product = await apiFor(Astro.request)
+  .bySlug(Astro.params.slug ?? '')
+  .catch((error: unknown) => {
+    if (error instanceof ApiError && error.status === 404) return null
 
-interface Props {
-  product: Product
-}
+    throw error
+  })
 
-const { product } = Astro.props
+if (product === null) return Astro.rewrite('/404')
 
-const category = categoryBySlug(product.category)
+const category = categoryBySlug(product.categorySlug)
 
-if (category === undefined) throw new Error(`Нет категории ${product.category}`)
+if (category === undefined)
+  throw new Error(`Нет раздела ${product.categorySlug}`)
 
 const colorTitle =
   COLORS.find((color) => color.slug === product.color)?.title ?? product.color
 
-const heading = titleOf(product)
+const heading = product.title
 
 const rows = [
   ...product.specs,
@@ -59,7 +52,7 @@ const description = product.description
     <div class="product-layout">
       <div class="product-gallery">
         <img
-          src={product.image.src}
+          src={product.imagePath}
           width="360"
           height="380"
           alt={`Картинка — ${heading.toLowerCase()}`}

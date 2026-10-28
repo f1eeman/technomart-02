@@ -2,11 +2,16 @@
 import Layout from '@/layouts/Layout.astro'
 import PageHead from '@/components/page-head.astro'
 import CatalogTiles from '@/components/catalog-tiles.astro'
-import { CATEGORIES, PRODUCTS } from '@/data/catalog'
+import { CATEGORIES } from '@/data/catalog'
+import { apiFor } from '@/server/api'
 import { HOME } from '@/data/nav'
 
+const { items } = await apiFor(Astro.request).categories()
+const counts = Object.fromEntries(items.map((item) => [item.slug, item.total]))
+const total = items.reduce((sum, item) => sum + item.total, 0)
+
 const title = 'Каталог товаров — DEVICE'
-const description = `Шесть разделов и ${String(PRODUCTS.length)} товаров: виртуальная реальность, моноподы, экшн-камеры, фитнес-браслеты, умные часы и квадрокоптеры.`
+const description = `Шесть разделов и ${String(total)} товаров: виртуальная реальность, моноподы, экшн-камеры, фитнес-браслеты, умные часы и квадрокоптеры.`
 ---
 
 <Layout {title} {description} inner>
@@ -16,11 +21,11 @@ const description = `Шесть разделов и ${String(PRODUCTS.length)} �
   />
   <div class="catalog-page">
     <p class="catalog-lead">
-      {CATEGORIES.length} разделов и {PRODUCTS.length} товаров. Выберите раздел —
-      внутри фильтр по цене, цвету и наличию Bluetooth.
+      {CATEGORIES.length} разделов и {total} товаров. Выберите раздел — внутри фильтр
+      по цене, цвету и наличию Bluetooth.
     </p>
   </div>
-  <CatalogTiles counts inner />
+  <CatalogTiles {counts} inner />
 </Layout>
 
 <style>

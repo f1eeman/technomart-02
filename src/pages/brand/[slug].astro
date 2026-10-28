@@ -2,21 +2,12 @@
 import Layout from '@/layouts/Layout.astro'
 import PageHead from '@/components/page-head.astro'
 import Button from '@/components/button.astro'
-import { BRANDS, categoryBySlug, type Brand } from '@/data/catalog'
+import { BRANDS, brandBySlug, categoryBySlug } from '@/data/catalog'
 import { CATALOG, HOME } from '@/data/nav'
 
-export function getStaticPaths() {
-  return BRANDS.map((brand) => ({
-    params: { slug: brand.slug },
-    props: { brand },
-  }))
-}
+const brand = brandBySlug(Astro.params.slug ?? '')
 
-interface Props {
-  brand: Brand
-}
-
-const { brand } = Astro.props
+if (brand === undefined) return Astro.rewrite('/404')
 
 const category = categoryBySlug(brand.category)
 

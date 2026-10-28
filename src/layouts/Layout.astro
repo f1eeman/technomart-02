@@ -1,4 +1,8 @@
 ---
+import { meOf } from '@/server/api'
+
+const me = await meOf(Astro.request)
+
 import { Font } from 'astro:assets'
 import Seo from '@/components/seo.astro'
 import Header from '@/components/header.astro'
@@ -8,6 +12,7 @@ import Modals from '@/components/modals.astro'
 import '@/styles/index.css'
 
 interface Props {
+  checkout?: boolean
   title: string
   description: string
   inner?: boolean
@@ -21,6 +26,7 @@ const {
   inner = false,
   category,
   contacts = false,
+  checkout = false,
 } = Astro.props
 ---
 
@@ -36,13 +42,13 @@ const {
     <Font cssVariable="--font-gilroy-light" preload={[{ weight: 400 }]} />
     <Font cssVariable="--font-open-sans" preload={[{ weight: 400 }]} />
   </head>
-  <body data-session="guest">
+  <body data-session={me === null ? 'guest' : 'member'}>
     <Header {inner} {category} />
     <main>
       <slot />
     </main>
     <Footer {inner} />
-    <Modals {contacts} />
+    <Modals {contacts} {checkout} />
     <script>
       import { initCartControls, initCartPage } from '@/scripts/cart'
       import { initCompareControls, initComparePage } from '@/scripts/compare'
